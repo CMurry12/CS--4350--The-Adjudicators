@@ -1,2 +1,5 @@
 # CS--4350--The-Adjudicators
-The group project Rep for CS-4350. We are making a webpage for judging projects
+
+Project title: Judging App
+Group name: The Adjudicators
+Team members: Charles Murry, Aiba Diane, Ayomide Onafowokan, Edith Sanchez, Samual Holison
