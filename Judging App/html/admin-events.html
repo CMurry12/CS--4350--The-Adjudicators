@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Manage Events</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">The Adjudicators</div>
+    <nav>
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Events</h2>
+    <button id="addEventBtn" class="btn primary-btn">Add New Event</button>
+    <div id="eventForm" class="form-card modal" style="display:none;">
+      <h3>Create/Edit Event</h3>
+      <label for="eventName">Event Name</label>
+      <input type="text" id="eventName" required>
+
+      <label for="eventDesc">Description</label>
+      <input type="text" id="eventDesc">
+
+      <div class="modal-actions">
+        <button id="saveEventBtn" class="btn primary-btn">Save</button>
+        <button id="cancelEventBtn" class="btn secondary-btn">Cancel</button>
+      </div>
+    </div>
+    <table id="eventsTable" class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Event Name</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

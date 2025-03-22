@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Manage Projects</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">The Adjudicators</div>
+    <nav>
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Projects</h2>
+    <button id="addProjectBtn" class="btn primary-btn">Add New Project</button>
+    <div id="projectForm" class="form-card modal" style="display:none;">
+      <h3>Create/Edit Project</h3>
+      <label for="projectName">Project Name</label>
+      <input type="text" id="projectName" required>
+
+      <label for="eventId">Event ID</label>
+      <input type="text" id="eventId" required>
+      <div class="modal-actions">
+        <button id="saveProjectBtn" class="btn primary-btn">Save</button>
+        <button id="cancelProjectBtn" class="btn secondary-btn">Cancel</button>
+      </div>
+    </div>
+    <table id="projectsTable" class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Project Name</th>
+          <th>Event ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
