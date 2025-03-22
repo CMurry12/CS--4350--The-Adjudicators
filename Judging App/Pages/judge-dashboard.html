@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Judge Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header__logo">The Adjudicators</div>
+    <nav class="header__nav">
+      <a href="index.html">Home</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="main-container">
+    <h2 class="page-title">Judge Dashboard</h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search events...">
+      <button id="searchBtn" class="btn btn--primary">Search</button>
+    </div>
+    <div id="eventsList" class="events-list"></div>
+  </main>
+
+  <script src="js/judge.js"></script>
+</body>
+</html>

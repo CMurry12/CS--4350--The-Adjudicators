@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header__logo">The Adjudicators</div>
+    <nav class="header__nav">
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h3>Admin Menu</h3>
+      <ul>
+        <li><a href="admin-dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="admin-events.html">Manage Events</a></li>
+        <li><a href="admin-judges.html">Manage Judges</a></li>
+        <li><a href="admin-projects.html">Manage Projects</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <h2>Welcome, Admin!</h2>
+      <div class="admin-cards">
+        <div class="admin-card">
+          <h3>Events</h3>
+          <p>Create, edit, or delete events.</p>
+          <a href="admin-events.html" class="btn btn--primary">Manage</a>
+        </div>
+        <div class="admin-card">
+          <h3>Judges</h3>
+          <p>Control judge accounts and permissions.</p>
+          <a href="admin-judges.html" class="btn btn--primary">Manage</a>
+        </div>
+        <div class="admin-card">
+          <h3>Projects</h3>
+          <p>Organize the projects competing in events.</p>
+          <a href="admin-projects.html" class="btn btn--primary">Manage</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
