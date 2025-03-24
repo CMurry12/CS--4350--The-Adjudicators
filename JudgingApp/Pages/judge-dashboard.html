@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judge Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding-top: 70px;
+    }
+
+    /* Header Styling */
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .header__logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .header__nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .header__nav a:hover {
+      color: #ffd700;
+    }
+
+    /* Main Content */
+    .main-container {
+      width: 90%;
+      max-width: 800px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      margin-top: 80px;
+    }
+
+    .page-title {
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 60%;
+    }
+
+    .events-list {
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background: #fff;
+      color: #333;
+      border-radius: 5px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn--primary {
+      background: #ffd700;
+      color: #333;
+    }
+
+    .btn:hover {
+      background: #f0f0f0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .search-bar {
+        flex-direction: column;
+        align-items: center;
+      }
+      .search-bar input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header__logo">The Adjudicators</div>
+    <nav class="header__nav">
+      <a href="index.html">Home</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="main-container">
+    <h2 class="page-title">Judge Dashboard</h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search events...">
+      <button id="searchBtn" class="btn btn--primary">Search</button>
+    </div>
+    <div id="eventsList" class="events-list"></div>
+  </main>
+
+  <script src="js/judge.js"></script>
+</body>
+</html>
