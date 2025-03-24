@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔐 Login: Check user role
 app.post('/api/login', (req, res) => {
   const { userId } = req.body;
 
@@ -23,7 +22,6 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// ✅ Register Judge
 app.post('/api/register', (req, res) => {
   const { fullName, email, password, role } = req.body;
 
@@ -37,7 +35,6 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-// ➕ Create Event
 app.post('/api/events', (req, res) => {
   const { name, date, location, level, status } = req.body;
 
@@ -51,7 +48,6 @@ app.post('/api/events', (req, res) => {
   });
 });
 
-// 📦 Create Project
 app.post('/api/projects', (req, res) => {
   const { title, description, userId, eventId } = req.body;
 
@@ -65,7 +61,6 @@ app.post('/api/projects', (req, res) => {
   });
 });
 
-// 📄 Get All Events
 app.get('/api/events', (req, res) => {
   const sql = 'SELECT * FROM EVENTS';
   db.query(sql, (err, results) => {
@@ -74,7 +69,6 @@ app.get('/api/events', (req, res) => {
   });
 });
 
-// 🧪 Server Running
 app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:3000');
 });

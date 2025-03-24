@@ -16,7 +16,6 @@ function getAuthHeaders() {
   };
 }
 
-// ----- EVENTS -----
 const addEventBtn = document.getElementById("addEventBtn");
 const eventForm = document.getElementById("eventForm");
 const saveEventBtn = document.getElementById("saveEventBtn");
@@ -54,7 +53,6 @@ if (saveEventBtn) {
   });
 }
 
-// ----- JUDGES -----
 const addJudgeBtn = document.getElementById("addJudgeBtn");
 const judgeForm = document.getElementById("judgeForm");
 const saveJudgeBtn = document.getElementById("saveJudgeBtn");
@@ -90,7 +88,7 @@ if (saveJudgeBtn) {
   });
 }
 
-// ----- PROJECTS -----
+
 const addProjectBtn = document.getElementById("addProjectBtn");
 const projectForm = document.getElementById("projectForm");
 const saveProjectBtn = document.getElementById("saveProjectBtn");

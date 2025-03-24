@@ -1,6 +1,6 @@
 const API_URL = 'http://localhost:3000/api';
 
-// LOGIN
+
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -35,7 +35,7 @@ if (loginForm) {
   });
 }
 
-// REGISTER
+
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
@@ -73,7 +73,7 @@ if (registerForm) {
   });
 }
 
-// UTILITY
+
 function checkAuth() {
   const token = localStorage.getItem('token');
   if (!token) {
