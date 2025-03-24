@@ -162,7 +162,6 @@ body {
   background-color: var(--primary-hover);
 }
 
-/* Form Styles */
 .form-container {
   background: var(--form-bg);
   padding: 2rem;
@@ -217,7 +216,6 @@ body {
   text-decoration: underline;
 }
 
-/* Auth Pages Specific Styles */
 .auth-page {
   background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
   min-height: 100vh;
