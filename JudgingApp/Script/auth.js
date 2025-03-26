@@ -2,14 +2,20 @@ const loginForm = document.getElementById("loginForm");
 if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        const judgeId = document.getElementById("judgeId").value; // Changed from email
+        const judgeId = document.getElementById("judgeId").value;
         const password = document.getElementById("password").value;
 
         let users = JSON.parse(localStorage.getItem('users')) || {};
 
         if (users[judgeId] && users[judgeId] === password) {
             alert("Login successful!");
-            window.location.href = "judge-dashboard.html";
+            // Check user role here. For simplicity, we'll assume a hardcoded admin user.
+            if (judgeId === 'admin') { // Replace 'admin' with your actual admin user ID or role check
+                window.location.href = "admin-dashboard.html";
+            } else {
+                window.location.href = "judge-dashboard.html";
+            }
+
         } else {
             alert("Invalid Judge ID or password.");
         }
@@ -21,7 +27,7 @@ if (registerForm) {
     registerForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const judgeId = document.getElementById("judgeId").value; // Changed from email
+        const judgeId = document.getElementById("judgeId").value;
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
 
