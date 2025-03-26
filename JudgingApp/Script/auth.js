@@ -9,8 +9,8 @@ if (loginForm) {
 
         if (users[judgeId] && users[judgeId] === password) {
             alert("Login successful!");
-            // Check user role here. For simplicity, we'll assume a hardcoded admin user.
-            if (judgeId === 'admin') { // Replace 'admin' with your actual admin user ID or role check
+            
+            if (judgeId === 'admin') {
                 window.location.href = "admin-dashboard.html";
             } else {
                 window.location.href = "judge-dashboard.html";
