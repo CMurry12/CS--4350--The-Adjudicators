@@ -165,7 +165,7 @@
             }
             passwordError.textContent = "";
 
-            // Store user data (INSECURE - for demonstration purposes only)
+        
             let users = JSON.parse(localStorage.getItem('users')) || {};
             if (users[judgeId]) {
                 alert("Judge ID already exists.");
