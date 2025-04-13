@@ -6,18 +6,14 @@ if (loginForm) {
         const password = document.getElementById("password").value;
 
         let users = JSON.parse(localStorage.getItem('users')) || {};
-
-        if (users[judgeId] && users[judgeId] === password) {
-            alert("Login successful!");
-            
-            if (judgeId === 'admin') {
-                window.location.href = "admin-dashboard.html";
-            } else {
-                window.location.href = "judge-dashboard.html";
-            }
-
+        let user = users.find(u => u.judgeId === judgeId && u.password === password);
+        
+        if (user) {
+            alert('Login successful!');
+        // Redirect to the judging dashboard or homepage
+            window.location.href = 'dashboard.html'; 
         } else {
-            alert("Invalid Judge ID or password.");
+            alert('Invalid Judge ID or Password.');
         }
     });
 }
