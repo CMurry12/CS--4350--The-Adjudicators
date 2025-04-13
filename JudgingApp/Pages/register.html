@@ -166,17 +166,16 @@
             passwordError.textContent = "";
 
         
-            let users = JSON.parse(localStorage.getItem('users')) || {};
-            if (users[judgeId]) {
-                alert("Judge ID already exists.");
-                return;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let user = users.find(u => u.judgeId === judgeId && u.password === password);
+
+            if (user) {
+                alert('Login successful!');
+        // Redirect to the judging dashboard or homepage
+                window.location.href = 'dashboard.html'; 
+            } else {
+                alert('Invalid Judge ID or Password.');
             }
-
-            users[judgeId] = password;
-            localStorage.setItem('users', JSON.stringify(users));
-
-            alert("Registration successful. You can now login.");
-            window.location.href = 'login.html';
         });
 
     </script>
