@@ -167,15 +167,11 @@
 
         
             let users = JSON.parse(localStorage.getItem('users')) || [];
-            let user = users.find(u => u.judgeId === judgeId && u.password === password);
+            users.push({ judgeId, password });
+            localStorage.setItem('users', JSON.stringify(users));
 
-            if (user) {
-                alert('Login successful!');
-        // Redirect to the judging dashboard or homepage
-                window.location.href = 'dashboard.html'; 
-            } else {
-                alert('Invalid Judge ID or Password.');
-            }
+            alert('Registration successful! Please login.');
+            window.location.href = 'login.html'; // Redirect to login page
         });
 
     </script>
