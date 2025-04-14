@@ -134,7 +134,7 @@ app.post("/api/events", async (req, res) => {
 // GET EVENTS
 app.get("/api/events", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM events ORDER BY date ASC");
+    const [rows] = await db.query("SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC");
     res.json(rows);
   } catch (err) {
     console.error("Fetch events error:", err);
