@@ -192,7 +192,7 @@ app.post("/api/projects/review", async (req, res) => {
   }
 });
 app.get("/", (req, res) => {
-  res.send("API is working 🚀");
+  res.sendFile(path.join(/Users/samuelholison/Downloads/GitHub/CS--4350--The-Adjudicators/JudgingApp/public"public","admin-analytics.html",);
 });
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
