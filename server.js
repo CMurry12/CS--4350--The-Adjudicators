@@ -11,9 +11,11 @@ const db = require("./db");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -28,11 +30,9 @@ const upload = multer({ storage });
 // STUDENT REGISTER
 app.post("/api/student/register", async (req, res) => {
   const { name, email, password } = req.body;
-
   if (!name || !email || !password) {
     return res.status(400).json({ error: "All fields are required." });
   }
-
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO students (name, email, password) VALUES (?, ?, ?)", [
@@ -53,11 +53,9 @@ app.post("/api/student/login", async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password required" });
   }
-
   try {
     const [rows] = await db.query("SELECT * FROM students WHERE email = ?", [email]);
     const student = rows[0];
-
     if (!student) return res.status(404).json({ error: "User not found" });
 
     const match = await bcrypt.compare(password, student.password);
@@ -73,11 +71,9 @@ app.post("/api/student/login", async (req, res) => {
 // JUDGE REGISTER
 app.post("/api/judges/register", async (req, res) => {
   const { judgeId, password } = req.body;
-
   if (!judgeId || !password) {
     return res.status(400).json({ error: "Judge ID and password are required." });
   }
-
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO judges (judgeId, password) VALUES (?, ?)", [
@@ -97,11 +93,9 @@ app.post("/api/judges/login", async (req, res) => {
   if (!judgeId || !password) {
     return res.status(400).json({ error: "Judge ID and password required" });
   }
-
   try {
     const [rows] = await db.query("SELECT * FROM judges WHERE judgeId = ?", [judgeId]);
     const judge = rows[0];
-
     if (!judge) return res.status(404).json({ error: "Judge not found" });
 
     const match = await bcrypt.compare(password, judge.password);
@@ -117,11 +111,9 @@ app.post("/api/judges/login", async (req, res) => {
 // ADD EVENT
 app.post("/api/events", async (req, res) => {
   const { name, date } = req.body;
-
   if (!name || !date) {
     return res.status(400).json({ error: "Name and date are required." });
   }
-
   try {
     await db.query("INSERT INTO events (name, date) VALUES (?, ?)", [name, date]);
     res.status(201).json({ message: "Event added successfully" });
@@ -146,11 +138,9 @@ app.get("/api/events", async (req, res) => {
 app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
   const { title, description, eventId } = req.body;
   const file = req.file;
-
   if (!title || !description || !eventId || !file) {
     return res.status(400).json({ error: "All fields and file are required." });
   }
-
   try {
     await db.query(
       "INSERT INTO projects (title, description, file_path, event_id) VALUES (?, ?, ?, ?)",
@@ -163,15 +153,13 @@ app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-// PROJECT REVIEW (weighted score)
+// PROJECT REVIEW
 app.post("/api/projects/review", async (req, res) => {
   const { judgeId, projectId, creativity, impact, execution, feasibility, design, feedback } = req.body;
-
   if (!judgeId || !projectId || creativity == null || impact == null || execution == null || feasibility == null || design == null) {
     return res.status(400).json({ error: "All scoring fields are required." });
   }
 
-  // Weighted score calculation (e.g. out of 10)
   const finalScore = (
     creativity * 0.2 +
     impact * 0.25 +
@@ -192,114 +180,53 @@ app.post("/api/projects/review", async (req, res) => {
   }
 });
 
-app.get('/Judge-login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'Judge-login.html'));
+// STATIC ROUTES for Admin/Judge pages
+app.get("/admin-analytics", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-analytics.html"));
 });
 
-app.get('/Leaderboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'Leaderboard.html'));
+app.get("/judge-login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Judge-login.html"));
 });
 
-app.get('/admin-analytics', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-analytics.html'));
+app.get("/leaderboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Leaderboard.html"));
 });
 
-app.get('/admin-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+app.get("/admin-dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-dashboard.html"));
 });
 
-app.get('/admin-events', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-events.html'));
+app.get("/admin-events", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-events.html"));
 });
 
-app.get('/admin-judges', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-judges.html'));
+app.get("/admin-judges", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-judges.html"));
 });
 
-app.get('/admin-projects', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-projects.html'));
+app.get("/admin-projects", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-projects.html"));
 });
 
-app.get('/admin.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.js'));
+app.get("/admin.js", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.js"));
 });
 
-app.get('/auth.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'auth.js'));
-});
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get("/auth.js", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "auth.js"));
 });
 
-app.get('/judge-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'judge-dashboard.html'));
+app.get("/judge-dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "judge-dashboard.html"));
 });
 
-app.get('/judge-events', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'judge-events.html'));
+// Default route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.get('/judge-scoring', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'judge-scoring.html'));
-});
-
-app.get('/judge.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'judge.js'));
-});
-
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-app.get('/profile', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
-});
-
-app.get('/projects', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'projects.html?id=123'));
-});
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'register.html'));
-});
-
-app.get('/registeras', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'registeras.html'));
-});
-
-app.get('/student-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'student-dashboard.html'));
-});
-
-app.get('/student-register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'student-register.html'));
-});
-
-app.get('/student.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'student.js'));
-});
-
-app.get('/styles.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
-});
-
-app.get('/db.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'db.js'));
-});
-
-app.get('/package-lock.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'package-lock.json'));
-});
-
-app.get('/package.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'package.json'));
-});
-
-app.get('/schema.sql', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'schema.sql'));
-});
-
-})
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
