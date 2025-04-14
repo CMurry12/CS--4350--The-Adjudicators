@@ -191,7 +191,9 @@ app.post("/api/projects/review", async (req, res) => {
     res.status(500).json({ error: "Server error while submitting review" });
   }
 });
-
+app.get("/", (req, res) => {
+  res.send("API is working 🚀");
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
