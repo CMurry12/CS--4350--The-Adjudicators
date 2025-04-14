@@ -2,162 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       background: linear-gradient(to right, #43cea2, #185a9d);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding-top: 100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.75);
+      font-family: Arial, sans-serif;
       color: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      padding: 40px;
     }
 
-    .header__logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .header__nav a {
-      color: #fff;
-      text-decoration: none;
-      margin-left: 20px;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-
-    .header__nav a:hover {
-      color: #ffd700;
-    }
-
-    .dashboard {
-      width: 90%;
-      max-width: 800px;
-      background: rgba(255, 255, 255, 0.1);
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.15);
       padding: 30px;
-      border-radius: 16px;
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(10px);
+      border-radius: 10px;
     }
 
-    .dashboard h2 {
+    h2 {
       text-align: center;
-      margin-bottom: 25px;
-      font-size: 28px;
+      margin-bottom: 20px;
     }
 
-    .project-card {
+    .project {
       background: rgba(255, 255, 255, 0.2);
       padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 15px;
+      border-radius: 6px;
     }
 
-    .project-card h3 {
-      margin-top: 0;
-      color: #ffd700;
-    }
-
-    .project-card p {
-      margin: 5px 0;
-      line-height: 1.5;
-    }
-
-    .feedback {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 10px;
-      border-left: 4px solid #ffd700;
-    }
-
-    .feedback p {
-      margin: 6px 0;
-    }
-
-    .no-projects {
+    .btn-leaderboard {
+      display: inline-block;
+      margin-top: 30px;
+      background-color: #ffd700;
+      color: #000;
+      padding: 12px 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
       text-align: center;
-      font-size: 18px;
-      margin-top: 40px;
-      color: #f2f2f2;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .btn-leaderboard:hover {
+      background-color: #f4c400;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header__logo">The Adjudicators</div>
-    <nav class="header__nav">
-      <a href="index.html">Home</a>
-      <a href="login.html" onclick="localStorage.clear()">Logout</a>
-    </nav>
-  </header>
+  <div class="container">
+    <h2>Welcome, Student!</h2>
 
-  <div class="dashboard">
-    <h2>Your Submitted Projects</h2>
-    <div id="projectContainer"></div>
+    <section id="submittedProjects">
+      <h3>Your Submitted Projects</h3>
+      <div id="projectList">
+        <!-- Project items will be inserted here -->
+      </div>
+    </section>
+
+    <!-- Leaderboard Button -->
+    <div style="text-align: center;">
+      <a href="Leaderboard.html" class="btn-leaderboard">🏆 View Leaderboard</a>
+    </div>
   </div>
 
   <script>
-    // 🔓 Remove login check for demo/testing
-    const student = { id: 1 }; // Replace 1 with actual student ID if needed
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    async function fetchStudentProjects() {
-      const res = await fetch(`http://localhost:3000/api/projects/student/${student.id}`);
-      const data = await res.json();
-      const container = document.getElementById("projectContainer");
+    async function loadProjects() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/projects/student/${user.id}`);
+        const projects = await res.json();
 
-      if (data.length === 0) {
-        container.innerHTML = '<p class="no-projects">You haven\'t submitted any projects yet.</p>';
-        return;
-      }
-
-      data.forEach(project => {
-        const card = document.createElement("div");
-        card.className = "project-card";
-
-        let feedbackHtml = "";
-        if (project.reviews && project.reviews.length > 0) {
-          feedbackHtml = project.reviews.map(r => `
-            <div class="feedback">
-              <p><strong>Judge:</strong> ${r.judge_id}</p>
-              <p><strong>Score:</strong> ${r.score}</p>
-              <p><strong>Feedback:</strong> ${r.feedback}</p>
-            </div>
-          `).join("");
-        } else {
-          feedbackHtml = "<p class='feedback'>No feedback yet.</p>";
+        const container = document.getElementById("projectList");
+        if (!projects.length) {
+          container.innerHTML = "<p>No projects submitted yet.</p>";
+          return;
         }
 
-        card.innerHTML = `
-          <h3>${project.title}</h3>
-          <p><strong>Description:</strong> ${project.description}</p>
-          ${feedbackHtml}
-        `;
-        container.appendChild(card);
-      });
+        projects.forEach(project => {
+          const div = document.createElement("div");
+          div.className = "project";
+          div.innerHTML = `
+            <h4>${project.title}</h4>
+            <p>${project.description}</p>
+            <p><strong>Event:</strong> ${project.event_id}</p>
+            <a href="http://localhost:3000/uploads/${project.file_path}" target="_blank" style="color: gold;">View File</a>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error loading projects:", err);
+        document.getElementById("projectList").innerHTML = "<p>Error loading projects.</p>";
+      }
     }
 
-    fetchStudentProjects();
+    loadProjects();
   </script>
 </body>
 </html>
