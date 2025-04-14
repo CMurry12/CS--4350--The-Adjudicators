@@ -99,9 +99,34 @@ app.post("/api/judges/login", async (req, res) => {
   }
 });
 
-// Other existing routes for events, projects, etc. can go below...
+// ADD EVENT
+app.post("/api/events", async (req, res) => {
+  const { name, date } = req.body;
+
+  if (!name || !date) {
+    return res.status(400).json({ error: "Name and date are required." });
+  }
+
+  try {
+    await db.query("INSERT INTO events (name, date) VALUES (?, ?)", [name, date]);
+    res.status(201).json({ message: "Event added successfully" });
+  } catch (err) {
+    console.error("Event creation error:", err);
+    res.status(500).json({ error: "Server error while adding event" });
+  }
+});
+
+// GET EVENTS
+app.get("/api/events", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM events ORDER BY date ASC");
+    res.json(rows);
+  } catch (err) {
+    console.error("Fetch events error:", err);
+    res.status(500).json({ error: "Server error while fetching events" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
