@@ -2,6 +2,10 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const mysql = require("mysql2/promise");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const db = require("./db");
 
 const app = express();
@@ -9,6 +13,17 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  },
+});
+const upload = multer({ storage });
 
 // STUDENT REGISTER
 app.post("/api/student/register", async (req, res) => {
@@ -124,6 +139,56 @@ app.get("/api/events", async (req, res) => {
   } catch (err) {
     console.error("Fetch events error:", err);
     res.status(500).json({ error: "Server error while fetching events" });
+  }
+});
+
+// PROJECT UPLOAD
+app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
+  const { title, description, eventId } = req.body;
+  const file = req.file;
+
+  if (!title || !description || !eventId || !file) {
+    return res.status(400).json({ error: "All fields and file are required." });
+  }
+
+  try {
+    await db.query(
+      "INSERT INTO projects (title, description, file_path, event_id) VALUES (?, ?, ?, ?)",
+      [title, description, file.filename, eventId]
+    );
+    res.status(201).json({ message: "Project uploaded successfully!" });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Server error while uploading project" });
+  }
+});
+
+// PROJECT REVIEW (weighted score)
+app.post("/api/projects/review", async (req, res) => {
+  const { judgeId, projectId, creativity, impact, execution, feasibility, design, feedback } = req.body;
+
+  if (!judgeId || !projectId || creativity == null || impact == null || execution == null || feasibility == null || design == null) {
+    return res.status(400).json({ error: "All scoring fields are required." });
+  }
+
+  // Weighted score calculation (e.g. out of 10)
+  const finalScore = (
+    creativity * 0.2 +
+    impact * 0.25 +
+    execution * 0.2 +
+    feasibility * 0.15 +
+    design * 0.2
+  ).toFixed(2);
+
+  try {
+    await db.query(
+      "INSERT INTO reviews (judge_id, project_id, creativity, impact, execution, feasibility, design, final_score, feedback) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [judgeId, projectId, creativity, impact, execution, feasibility, design, finalScore, feedback]
+    );
+    res.status(201).json({ message: "Review submitted successfully!" });
+  } catch (err) {
+    console.error("Review error:", err);
+    res.status(500).json({ error: "Server error while submitting review" });
   }
 });
 
