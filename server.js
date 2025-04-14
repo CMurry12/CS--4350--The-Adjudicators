@@ -191,9 +191,9 @@ app.post("/api/projects/review", async (req, res) => {
     res.status(500).json({ error: "Server error while submitting review" });
   }
 });
-app.get("/", (req, res) => {
+app.get('/dmin-analytics', (req, res) => {
   res.sendFile(path.join(__dirname,"public","admin-analytics.html"));
-));
+});
 app.get('/Judge-login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'Judge-login.html'));
 });
