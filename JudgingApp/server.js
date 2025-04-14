@@ -71,7 +71,7 @@ app.post("/api/student/login", async (req, res) => {
 });
 
 // JUDGE REGISTER
-app.post("/api/judges/register", async (req, res) => {
+app.post("/api/judge/register", async (req, res) => {
   const { judgeId, password } = req.body;
 
   if (!judgeId || !password) {
