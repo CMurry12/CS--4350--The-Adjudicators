@@ -83,11 +83,14 @@
   </div>
 
   <script>
-    const student = JSON.parse(localStorage.getItem("user"));
-    if (!student || !student.id) {
-      alert("You must be logged in as a student.");
-      window.location.href = "student.html";
-    }
+    // 🧪 Bypass login check for now (testing mode)
+    // const student = JSON.parse(localStorage.getItem("user"));
+    // if (!student || !student.id) {
+    //   alert("You must be logged in as a student.");
+    //   window.location.href = "student.html";
+    // }
+
+    const student = { id: 1 }; // ⬅️ Replace with an actual student ID in your DB
 
     async function fetchStudentProjects() {
       const res = await fetch(`http://localhost:3000/api/projects/student/${student.id}`);
