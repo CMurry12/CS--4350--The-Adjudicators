@@ -99,7 +99,6 @@
   </div>
 
   <script>
-    // Load available events into dropdown
     async function loadEvents() {
       try {
         const res = await fetch("http://localhost:3000/api/events");
@@ -118,7 +117,6 @@
       }
     }
 
-    // Submit project
     document.getElementById("projectForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = document.getElementById("projectForm");
@@ -131,7 +129,7 @@
         return;
       }
 
-      formData.append("userId", user.id); // optional, in case you need user ID on backend
+      formData.append("userId", user.id); // If needed by backend
 
       try {
         const res = await fetch("http://localhost:3000/api/projects/upload", {
@@ -154,7 +152,6 @@
       }
     });
 
-    // Load events on page load
     loadEvents();
   </script>
 </body>
