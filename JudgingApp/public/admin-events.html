@@ -86,37 +86,42 @@
   </div>
 
   <script>
-    async function fetchEvents() {
-      const res = await fetch("http://localhost:3000/api/events");
-      const events = await res.json();
-      const list = document.getElementById("eventList");
-      list.innerHTML = "";
+    document.addEventListener("DOMContentLoaded", () => {
+      // Handle event form submission
+      document.getElementById("eventForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      events.forEach(event => {
-        const li = document.createElement("li");
-        li.textContent = `${event.name} — ${event.date}`;
-        list.appendChild(li);
-      });
-    }
+        const name = document.getElementById("eventName").value;
+        const date = document.getElementById("eventDate").value;
 
-    document.getElementById("eventForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("eventName").value;
-      const date = document.getElementById("eventDate").value;
+        const res = await fetch("http://localhost:3000/api/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, date }),
+        });
 
-      const res = await fetch("http://localhost:3000/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, date }),
+        const data = await res.json();
+        alert(data.message || "Event added");
+
+        document.getElementById("eventForm").reset();
+        fetchEvents(); // Reload the list
       });
 
-      const data = await res.json();
-      alert(data.message || "Event added");
-      document.getElementById("eventForm").reset();
-      fetchEvents(); // 🔁 Refresh after adding
+      // Load existing events
+      fetchEvents();
+
+      async function fetchEvents() {
+        const res = await fetch("http://localhost:3000/api/events");
+        const events = await res.json();
+        const list = document.getElementById("eventList");
+        list.innerHTML = "";
+        events.forEach(event => {
+          const li = document.createElement("li");
+          li.textContent = `${event.name} — ${event.date}`;
+          list.appendChild(li);
+        });
+      }
     });
-
-    fetchEvents(); // Initial load
   </script>
 </body>
 </html>
