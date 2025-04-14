@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .container {
+      background: #fff;
+      padding: 3rem 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      color: #1f2937;
+      font-size: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .login-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .login-box {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: #f9fafb;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .login-box:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+    }
+
+    .login-box.judge {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .login-box.student {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    .home-button {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: transparent;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.home-button:hover {
+  background: #ffffff;
+  color: #2563eb;
+}
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 0 1rem;
+        padding: 2rem;
+      }
+
+      .login-options {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="home-button">Home</a>
+
+  <div class="container">
+    <h1>Register As</h1>
+    <div class="login-options">
+      <div class="login-box judge" onclick="location.href='register.html'">Judge</div>
+      <div class="login-box student" onclick="location.href='student-register.html'">Student</div>
+    </div>
+  </div>
+  
+</body>
+</html>
