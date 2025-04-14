@@ -75,23 +75,45 @@
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Judge Login</h2>
-    <form id="loginForm" class="form-card">
-      <label for="userId">Judge ID</label>
-      <input type="text" id="userId" name="userId" required />
+ <div class="form-container">
+  <h2>Judge Login</h2>
+  <form id="loginForm" class="form-card">
+   <label for="userId">Judge ID</label>
+   <input type="text" id="userId" name="userId" required />
+   <label for="password">Password</label>
+   <input type="password" id="password" name="password" required />
+   <button type="submit" class="btn">Login</button>
+   <p id="loginError" style="color:red;margin-top:10px;"></p>
+  </form>
+  <p class="form-note">
+   Not registered? <a href="register.html">Create an account</a><br />
+   <a href="login.html" style="color:#2563eb;">← Back to Home</a>
+  </p>
+ </div>
+ <script>
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+   e.preventDefault();
+   const userId = document.getElementById("userId").value;
+   const password = document.getElementById("password").value;
+   const loginError = document.getElementById("loginError");
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required />
-
-      <button type="submit" class="btn">Login</button>
-      <p id="loginError" style="color:red;margin-top:10px;"></p>
-    </form>
-    <p class="form-note">
-      Not registered? <a href="register.html">Create an account</a><br>
-      <a href="login.html" style="color:#2563eb;">← Back to Home</a>
-    </p>
-  </div>
-  <script src="auth.js"></script>
+   try {
+    const res = await fetch("http://localhost:3000/api/judge/login", {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({ userId, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+     loginError.textContent = data.error || "Login failed.";
+    } else {
+     localStorage.setItem("user", JSON.stringify(data.user));
+     window.location.href = "judge-dashboard.html";
+    }
+   } catch (err) {
+    loginError.textContent = "Server error.";
+   }
+  });
+ </script>
 </body>
 </html>
