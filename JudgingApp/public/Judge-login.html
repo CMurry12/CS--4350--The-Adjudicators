@@ -98,9 +98,32 @@
       margin-top: 1rem;
       font-size: 0.95rem;
     }
+    .home-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.85rem;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+}
+
+.home-button:hover {
+  background: #ffffff;
+  color: #2563eb;
+}
+
+
   </style>
 </head>
 <body>
+  <a href="index.html" class="home-button">Home</a>
+
   <div class="form-container">
     <h2>Judge Login</h2>
     <form id="loginForm">
@@ -119,6 +142,7 @@
       <a href="login.html">← Back to Home</a>
     </p>
   </div>
+
 
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
@@ -150,4 +174,3 @@
   </script>
 </body>
 </html>
-
