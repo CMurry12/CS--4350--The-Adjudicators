@@ -1,17 +1,18 @@
+// ==============================
 // JUDGE LOGIN
 const judgeLoginForm = document.getElementById("loginForm");
 if (judgeLoginForm) {
   judgeLoginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const userId = document.getElementById("userId").value;
+    const judgeId = document.getElementById("userId").value;
     const password = document.getElementById("password").value;
 
     try {
       const res = await fetch("http://localhost:3000/api/judges/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ judgeId: userId, password }),
+        body: JSON.stringify({ judgeId, password }),
       });
 
       const data = await res.json();
@@ -28,7 +29,8 @@ if (judgeLoginForm) {
   });
 }
 
-// JUDGE REGISTRATION
+// ==============================
+// JUDGE REGISTER
 const judgeRegisterForm = document.getElementById("registerForm");
 if (judgeRegisterForm) {
   judgeRegisterForm.addEventListener("submit", async (e) => {
@@ -64,6 +66,7 @@ if (judgeRegisterForm) {
   });
 }
 
+// ==============================
 // STUDENT LOGIN
 const studentLoginForm = document.getElementById("studentLoginForm");
 if (studentLoginForm) {
@@ -94,7 +97,8 @@ if (studentLoginForm) {
   });
 }
 
-// STUDENT REGISTRATION
+// ==============================
+// STUDENT REGISTER
 const studentRegisterForm = document.getElementById("studentRegisterForm");
 if (studentRegisterForm) {
   studentRegisterForm.addEventListener("submit", async (e) => {
@@ -115,7 +119,7 @@ if (studentRegisterForm) {
       const res = await fetch("http://localhost:3000/api/student/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
