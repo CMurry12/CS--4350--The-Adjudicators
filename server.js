@@ -192,8 +192,115 @@ app.post("/api/projects/review", async (req, res) => {
   }
 });
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname,"public","admin-analytics.html", "Judge-login.html", "Leaderboard.html", "admin-analytics.html", "admin-dashboard.html", "admin-events.html", "admin-judges.html", "admin-projects.html", "admin.js", "auth.js", "index.html", "judge-dashboard.html", "judge-events.html", "judge-scoring.html", "judge.html", "login.html", "profile.html", “projects.html”, “projects.html?id=123”, “registeras.html”, “student-dashboard.html”, “student-register.html”, “student.html”, “styles.css”
+  res.sendFile(path.join(__dirname,"public","admin-analytics.html"));
 ));
+app.get('/Judge-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'Judge-login.html'));
+});
+
+app.get('/Leaderboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'Leaderboard.html'));
+});
+
+app.get('/admin-analytics', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-analytics.html'));
+});
+
+app.get('/admin-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+app.get('/admin-events', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-events.html'));
+});
+
+app.get('/admin-judges', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-judges.html'));
+});
+
+app.get('/admin-projects', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-projects.html'));
+});
+
+app.get('/admin.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.js'));
+});
+
+app.get('/auth.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth.js'));
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/judge-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'judge-dashboard.html'));
+});
+
+app.get('/judge-events', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'judge-events.html'));
+});
+
+app.get('/judge-scoring', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'judge-scoring.html'));
+});
+
+app.get('/judge.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'judge.js'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+app.get('/projects', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'projects.html?id=123'));
+});
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.get('/registeras', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'registeras.html'));
+});
+
+app.get('/student-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'student-dashboard.html'));
+});
+
+app.get('/student-register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'student-register.html'));
+});
+
+app.get('/student.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'student.js'));
+});
+
+app.get('/styles.css', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+});
+
+app.get('/db.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'db.js'));
+});
+
+app.get('/package-lock.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'package-lock.json'));
+});
+
+app.get('/package.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'package.json'));
+});
+
+app.get('/schema.sql', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'schema.sql'));
+});
+
 })
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
