@@ -76,24 +76,54 @@
     }
   </style>
 </head>
+
 <body>
-  <div class="form-container">
-    <h2>Register as a Judge</h2>
-    <form id="registerForm">
-      <label for="judgeId">Judge ID</label>
-      <input type="text" id="judgeId" name="judgeId" required>
+ <div class="form-container">
+  <h2>Register as a Judge</h2>
+  <form id="registerForm">
+   <label for="judgeId">Judge ID</label>
+   <input type="text" id="judgeId" name="judgeId" required />
+   <label for="password">Password</label>
+   <input type="password" id="password" name="password" required />
+   <label for="confirmPassword">Confirm Password</label>
+   <input type="password" id="confirmPassword" name="confirmPassword" required />
+   <p id="passwordError" class="error-message"></p>
+   <button type="submit" class="btn">Register</button>
+  </form>
+  <p class="form-note">Already have an account? <a href="judge-login.html">Login</a></p>
+ </div>
+ <script>
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+   e.preventDefault();
+   const judgeId = document.getElementById("judgeId").value;
+   const password = document.getElementById("password").value;
+   const confirmPassword = document.getElementById("confirmPassword").value;
+   const passwordError = document.getElementById("passwordError");
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
+   if (password !== confirmPassword) {
+    passwordError.textContent = "Passwords do not match.";
+    return;
+   }
 
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" required>
-      <p id="passwordError" class="error-message"></p>
-
-      <button type="submit" class="btn">Register</button>
-    </form>
-    <p class="form-note">Already have an account? <a href="judge-login.html">Login</a></p>
-  </div>
-  <script src="auth.js"></script>
+   try {
+    const res = await fetch("http://localhost:3000/api/judge/register", {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({ judgeId, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+     passwordError.textContent = data.error || "Registration failed.";
+    } else {
+     alert("Registration successful. You can now log in.");
+     window.location.href = "judge-login.html";
+    }
+   } catch (err) {
+    passwordError.textContent = "Server error. Try again.";
+   }
+  });
+ </script>
 </body>
 </html>
+
+
