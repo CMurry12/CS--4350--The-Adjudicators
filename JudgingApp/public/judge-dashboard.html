@@ -112,11 +112,8 @@
   </div>
 
   <script>
-    const judge = JSON.parse(localStorage.getItem("user"));
-    if (!judge || !judge.id) {
-      alert("You must be logged in to access this page.");
-      window.location.href = "judge-login.html";
-    }
+    // 🔓 Login check removed — using mock judge object
+    const judge = { id: 1 }; // Replace 1 with an actual judge ID if needed
 
     async function fetchEvents() {
       const res = await fetch(`http://localhost:3000/api/events/judge/${judge.id}`);
