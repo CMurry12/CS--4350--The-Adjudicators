@@ -107,31 +107,31 @@
   </div>
 
   <script>
-    const judge = JSON.parse(localStorage.getItem("user"));
-    if (!judge || !judge.id) {
-      alert("You must be logged in to access this page.");
-      window.location.href = "judge-login.html";
-    }
+    const judge = JSON.parse(localStorage.getItem("user")) || { id: "guest" };
 
     async function fetchEvents() {
-      const res = await fetch(`http://localhost:3000/api/events/judge/${judge.id}`);
-      const events = await res.json();
-      const container = document.getElementById("eventsContainer");
+      try {
+        const res = await fetch(`http://localhost:3000/api/events/judge/${judge.id}`);
+        const events = await res.json();
+        const container = document.getElementById("eventsContainer");
 
-      if (events.length === 0) {
-        container.innerHTML = "<p>No events assigned to you yet.</p>";
-        return;
+        if (!Array.isArray(events) || events.length === 0) {
+          container.innerHTML = "<p>No events assigned to you yet.</p>";
+          return;
+        }
+
+        events.forEach(event => {
+          const card = document.createElement("div");
+          card.className = "event-card";
+          card.innerHTML = `
+            <h3>${event.name}</h3>
+            <p><strong>Date:</strong> ${event.date || "TBA"}</p>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        document.getElementById("eventsContainer").innerHTML = "<p style='color: red;'>Failed to load events.</p>";
       }
-
-      events.forEach(event => {
-        const card = document.createElement("div");
-        card.className = "event-card";
-        card.innerHTML = `
-          <h3>${event.name}</h3>
-          <p><strong>Date:</strong> ${event.date || "TBA"}</p>
-        `;
-        container.appendChild(card);
-      });
     }
 
     fetchEvents();
