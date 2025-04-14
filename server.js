@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
@@ -11,13 +10,11 @@ const db = require("./db");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "public")));
 
-// Multer configuration
+// Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -27,12 +24,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// STUDENT REGISTER
+/* STUDENT REGISTER */
 app.post("/api/student/register", async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ error: "All fields are required." });
   }
+
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO students (name, email, password) VALUES (?, ?, ?)", [
@@ -47,12 +45,13 @@ app.post("/api/student/register", async (req, res) => {
   }
 });
 
-// STUDENT LOGIN
+/* STUDENT LOGIN */
 app.post("/api/student/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password required" });
   }
+
   try {
     const [rows] = await db.query("SELECT * FROM students WHERE email = ?", [email]);
     const student = rows[0];
@@ -68,12 +67,13 @@ app.post("/api/student/login", async (req, res) => {
   }
 });
 
-// JUDGE REGISTER
+/* JUDGE REGISTER */
 app.post("/api/judges/register", async (req, res) => {
   const { judgeId, password } = req.body;
   if (!judgeId || !password) {
     return res.status(400).json({ error: "Judge ID and password are required." });
   }
+
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO judges (judgeId, password) VALUES (?, ?)", [
@@ -87,12 +87,13 @@ app.post("/api/judges/register", async (req, res) => {
   }
 });
 
-// JUDGE LOGIN
+/* JUDGE LOGIN */
 app.post("/api/judges/login", async (req, res) => {
   const { judgeId, password } = req.body;
   if (!judgeId || !password) {
     return res.status(400).json({ error: "Judge ID and password required" });
   }
+
   try {
     const [rows] = await db.query("SELECT * FROM judges WHERE judgeId = ?", [judgeId]);
     const judge = rows[0];
@@ -108,12 +109,31 @@ app.post("/api/judges/login", async (req, res) => {
   }
 });
 
-// ADD EVENT
+/* STUDENT PROFILE SUMMARY */
+app.get("/api/student/profile/:id", async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const [[student]] = await db.query("SELECT name, email FROM students WHERE id = ?", [studentId]);
+    const [[{ projectCount }]] = await db.query(
+      "SELECT COUNT(*) AS projectCount FROM projects WHERE user_id = ?", [studentId]
+    );
+    const [[{ eventCount }]] = await db.query(
+      "SELECT COUNT(DISTINCT event_id) AS eventCount FROM projects WHERE user_id = ?", [studentId]
+    );
+    res.json({ name: student.name, email: student.email, projectCount, eventCount });
+  } catch (err) {
+    console.error("Profile summary error:", err);
+    res.status(500).json({ error: "Failed to load student profile summary." });
+  }
+});
+
+/* ADD EVENT */
 app.post("/api/events", async (req, res) => {
   const { name, date } = req.body;
   if (!name || !date) {
     return res.status(400).json({ error: "Name and date are required." });
   }
+
   try {
     await db.query("INSERT INTO events (name, date) VALUES (?, ?)", [name, date]);
     res.status(201).json({ message: "Event added successfully" });
@@ -123,10 +143,12 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-// GET EVENTS
+/* GET UPCOMING EVENTS */
 app.get("/api/events", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM events ORDER BY date ASC");
+    const [rows] = await db.query(
+      "SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC"
+    );
     res.json(rows);
   } catch (err) {
     console.error("Fetch events error:", err);
@@ -134,17 +156,18 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-// PROJECT UPLOAD
+/* UPLOAD PROJECT */
 app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
-  const { title, description, eventId } = req.body;
+  const { title, description, eventId, userId } = req.body;
   const file = req.file;
-  if (!title || !description || !eventId || !file) {
+  if (!title || !description || !eventId || !file || !userId) {
     return res.status(400).json({ error: "All fields and file are required." });
   }
+
   try {
     await db.query(
-      "INSERT INTO projects (title, description, file_path, event_id) VALUES (?, ?, ?, ?)",
-      [title, description, file.filename, eventId]
+      "INSERT INTO projects (title, description, file_path, event_id, user_id) VALUES (?, ?, ?, ?, ?)",
+      [title, description, file.filename, eventId, userId]
     );
     res.status(201).json({ message: "Project uploaded successfully!" });
   } catch (err) {
@@ -153,7 +176,7 @@ app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-// PROJECT REVIEW
+/* REVIEW PROJECT */
 app.post("/api/projects/review", async (req, res) => {
   const { judgeId, projectId, creativity, impact, execution, feasibility, design, feedback } = req.body;
   if (!judgeId || !projectId || creativity == null || impact == null || execution == null || feasibility == null || design == null) {
@@ -180,53 +203,49 @@ app.post("/api/projects/review", async (req, res) => {
   }
 });
 
-// STATIC ROUTES for Admin/Judge pages
-app.get("/admin-analytics", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin-analytics.html"));
+/* LEADERBOARD */
+app.get("/api/leaderboard/recent", async (req, res) => {
+  try {
+    const [allEvents] = await db.query("SELECT * FROM events ORDER BY date DESC");
+    const topThree = allEvents.slice(0, 3);
+    const rest = allEvents.slice(3);
+
+    const formatEventProjects = async (eventList) => {
+      const result = [];
+      for (let event of eventList) {
+        const [projects] = await db.query(`
+          SELECT p.title, p.file_path, AVG(r.final_score) AS final_score
+          FROM projects p
+          JOIN reviews r ON p.id = r.project_id
+          WHERE p.event_id = ?
+          GROUP BY p.id
+          ORDER BY final_score DESC
+        `, [event.id]);
+
+        result.push({
+          event_id: event.id,
+          event_name: event.name,
+          date: event.date,
+          projects: projects.map((p, index) => ({
+            ...p,
+            rank: index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : null
+          }))
+        });
+      }
+      return result;
+    };
+
+    const topThreeData = await formatEventProjects(topThree);
+    const remainingData = await formatEventProjects(rest);
+
+    res.json({ topThree: topThreeData, others: remainingData });
+  } catch (err) {
+    console.error("Leaderboard recent events error:", err);
+    res.status(500).json({ error: "Failed to fetch leaderboard by event." });
+  }
 });
 
-app.get("/judge-login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "Judge-login.html"));
-});
-
-app.get("/leaderboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "Leaderboard.html"));
-});
-
-app.get("/admin-dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin-dashboard.html"));
-});
-
-app.get("/admin-events", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin-events.html"));
-});
-
-app.get("/admin-judges", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin-judges.html"));
-});
-
-app.get("/admin-projects", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin-projects.html"));
-});
-
-app.get("/admin.js", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin.js"));
-});
-
-app.get("/auth.js", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "auth.js"));
-});
-
-app.get("/judge-dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "judge-dashboard.html"));
-});
-
-// Default route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Start the server
+/* START SERVER */
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
