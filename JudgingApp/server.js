@@ -171,6 +171,35 @@ app.post("/api/projects/review", async (req, res) => {
     return res.status(400).json({ error: "All scoring fields are required." });
   }
 
+  // GET STUDENT PROFILE SUMMARY
+app.get("/api/student/profile/:id", async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const [[student]] = await db.query("SELECT name, email FROM students WHERE id = ?", [studentId]);
+
+    const [[{ projectCount }]] = await db.query(
+      "SELECT COUNT(*) AS projectCount FROM projects WHERE user_id = ?",
+      [studentId]
+    );
+
+    const [[{ eventCount }]] = await db.query(
+      "SELECT COUNT(DISTINCT event_id) AS eventCount FROM projects WHERE user_id = ?",
+      [studentId]
+    );
+
+    res.json({
+      name: student.name,
+      email: student.email,
+      projectCount,
+      eventCount
+    });
+  } catch (err) {
+    console.error("Profile summary error:", err);
+    res.status(500).json({ error: "Failed to load student profile summary." });
+  }
+});
+
   // Weighted score calculation (e.g. out of 10)
   const finalScore = (
     creativity * 0.2 +
