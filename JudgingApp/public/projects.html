@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Submit Project</title>
-  <link rel="stylesheet" href="../Styles/styles.css">
+  <link rel="stylesheet" href="../Styles/styles.css" />
   <style>
     body {
       background: linear-gradient(to right, #43cea2, #185a9d);
@@ -63,43 +63,66 @@
 </head>
 <body>
   <a href="student-dashboard.html" style="
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background-color: white;
-  color: #185a9d;
-  padding: 8px 15px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-">
-  ← Home
-</a>
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: white;
+    color: #185a9d;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  ">
+    ← Home
+  </a>
 
   <div class="form-container">
     <h2>Submit Your Project</h2>
-    <form id="projectForm">
+    <form id="projectForm" enctype="multipart/form-data">
       <label for="title">Project Title</label>
       <input type="text" id="title" name="title" required>
 
       <label for="description">Description</label>
       <textarea id="description" name="description" rows="5" required></textarea>
 
-      <label for="eventId">Event ID</label>
-      <input type="number" id="eventId" name="eventId" required>
+      <label for="eventId">Choose Event</label>
+      <select id="eventId" name="eventId" required>
+        <option value="">-- Select an Event --</option>
+      </select>
+
+      <label for="file">Upload File</label>
+      <input type="file" id="file" name="file" required />
 
       <button type="submit" class="btn">Submit Project</button>
     </form>
   </div>
 
   <script>
+    // Load available events into dropdown
+    async function loadEvents() {
+      try {
+        const res = await fetch("http://localhost:3000/api/events");
+        const events = await res.json();
+        const dropdown = document.getElementById("eventId");
+
+        events.forEach(event => {
+          const option = document.createElement("option");
+          option.value = event.id;
+          option.textContent = `${event.name} (${event.date})`;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load events:", err);
+        alert("Could not load event options.");
+      }
+    }
+
+    // Submit project
     document.getElementById("projectForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const title = document.getElementById("title").value;
-      const description = document.getElementById("description").value;
-      const eventId = document.getElementById("eventId").value;
+      const form = document.getElementById("projectForm");
+      const formData = new FormData(form);
       const user = JSON.parse(localStorage.getItem("user"));
 
       if (!user || !user.id) {
@@ -108,28 +131,31 @@
         return;
       }
 
-      const response = await fetch("http://localhost:3000/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          eventId,
-          userId: user.id
-        })
-      });
+      formData.append("userId", user.id); // optional, in case you need user ID on backend
 
-      const data = await response.json();
+      try {
+        const res = await fetch("http://localhost:3000/api/projects/upload", {
+          method: "POST",
+          body: formData
+        });
 
-      if (!response.ok) {
-        alert(data.error || "Project submission failed.");
-      } else {
-        alert("Project submitted successfully!");
-        window.location.href = "student-dashboard.html";
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || "Project submission failed.");
+        } else {
+          alert("Project submitted successfully!");
+          form.reset();
+          window.location.href = "student-dashboard.html";
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+        alert("Upload failed. Please try again.");
       }
     });
+
+    // Load events on page load
+    loadEvents();
   </script>
 </body>
 </html>
