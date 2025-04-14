@@ -8,12 +8,13 @@
   <style>
     body {
       background: linear-gradient(to right, #43cea2, #185a9d);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding-top: 100px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 100px;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
     }
 
     .header {
@@ -21,12 +22,13 @@
       top: 0;
       width: 100%;
       padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       color: #fff;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
     .header__logo {
@@ -38,33 +40,66 @@
       color: #fff;
       text-decoration: none;
       margin-left: 20px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .header__nav a:hover {
+      color: #ffd700;
     }
 
     .dashboard {
       width: 90%;
       max-width: 800px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 20px;
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
       color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .dashboard h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
     }
 
     .project-card {
       background: rgba(255, 255, 255, 0.2);
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .project-card h3 {
+      margin-top: 0;
+      color: #ffd700;
+    }
+
+    .project-card p {
+      margin: 5px 0;
+      line-height: 1.5;
     }
 
     .feedback {
-      background: rgba(0, 0, 0, 0.2);
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #ffd700;
     }
 
     .feedback p {
-      margin: 0.5rem 0;
+      margin: 6px 0;
+    }
+
+    .no-projects {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 40px;
+      color: #f2f2f2;
     }
   </style>
 </head>
@@ -83,14 +118,8 @@
   </div>
 
   <script>
-    // 🧪 Bypass login check for now (testing mode)
-    // const student = JSON.parse(localStorage.getItem("user"));
-    // if (!student || !student.id) {
-    //   alert("You must be logged in as a student.");
-    //   window.location.href = "student.html";
-    // }
-
-    const student = { id: 1 }; // ⬅️ Replace with an actual student ID in your DB
+    // 🔓 Remove login check for demo/testing
+    const student = { id: 1 }; // Replace 1 with actual student ID if needed
 
     async function fetchStudentProjects() {
       const res = await fetch(`http://localhost:3000/api/projects/student/${student.id}`);
@@ -98,7 +127,7 @@
       const container = document.getElementById("projectContainer");
 
       if (data.length === 0) {
-        container.innerHTML = "<p>You haven't submitted any projects yet.</p>";
+        container.innerHTML = '<p class="no-projects">You haven\'t submitted any projects yet.</p>';
         return;
       }
 
@@ -116,13 +145,13 @@
             </div>
           `).join("");
         } else {
-          feedbackHtml = "<p>No feedback yet.</p>";
+          feedbackHtml = "<p class='feedback'>No feedback yet.</p>";
         }
 
         card.innerHTML = `
           <h3>${project.title}</h3>
           <p><strong>Description:</strong> ${project.description}</p>
-          <div>${feedbackHtml}</div>
+          ${feedbackHtml}
         `;
         container.appendChild(card);
       });
