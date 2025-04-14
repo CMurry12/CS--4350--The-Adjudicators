@@ -43,3 +43,20 @@ CREATE TABLE IF NOT EXISTS reviews (
   FOREIGN KEY (judge_id) REFERENCES judges(id),
   FOREIGN KEY (project_id) REFERENCES projects(id)
 );
+
+CREATE TABLE reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  judge_id INT NOT NULL,
+  project_id INT NOT NULL,
+  creativity INT,
+  impact INT,
+  execution INT,
+  feasibility INT,
+  design INT,
+  final_score DECIMAL(5,2),
+  feedback TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (judge_id) REFERENCES judges(id),
+  FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+
