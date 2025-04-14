@@ -3,126 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin: Events</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Admin Events</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #4a00e0, #8e2de2);
       font-family: Arial, sans-serif;
-      padding: 40px;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
       color: white;
+    }
+
+    nav {
+      background: linear-gradient(to right, #000000, #232526);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      color: white;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 20px;
     }
 
     .container {
       max-width: 600px;
-      margin: auto;
-      background: rgba(255, 255, 255, 0.1);
+      margin: 60px auto;
+      background: rgba(255, 255, 255, 0.15);
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
-    h1, h2 {
+    h2 {
       text-align: center;
-    }
-
-    form {
-      margin-top: 20px;
+      margin-bottom: 30px;
     }
 
     label {
       display: block;
-      margin: 10px 0 5px;
+      margin-top: 15px;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
       padding: 10px;
-      border-radius: 6px;
+      margin-top: 5px;
       border: none;
-      margin-bottom: 15px;
+      border-radius: 5px;
     }
 
     button {
+      margin-top: 20px;
       width: 100%;
-      padding: 10px;
-      background-color: gold;
-      color: black;
-      font-weight: bold;
+      padding: 12px;
       border: none;
       border-radius: 6px;
+      background-color: #ffd700;
+      color: black;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #f4c400;
     }
 
     ul {
       margin-top: 30px;
       padding-left: 0;
-      list-style: none;
     }
 
-    li {
+    ul li {
       background: rgba(255, 255, 255, 0.2);
-      padding: 10px 15px;
-      margin-bottom: 10px;
+      padding: 12px;
       border-radius: 6px;
+      margin-bottom: 10px;
+      list-style: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Admin: Manage Events</h1>
 
-    <form id="eventForm">
-      <label for="eventName">Event Name</label>
-      <input type="text" id="eventName" required />
-
-      <label for="eventDate">Event Date</label>
-      <input type="date" id="eventDate" required />
-
-      <button type="submit">Add Event</button>
-    </form>
-
-    <h2>Upcoming Events</h2>
-    <ul id="eventList"></ul>
-  </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Handle event form submission
-      document.getElementById("eventForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById("eventName").value;
-        const date = document.getElementById("eventDate").value;
-
-        const res = await fetch("http://localhost:3000/api/events", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, date }),
-        });
-
-        const data = await res.json();
-        alert(data.message || "Event added");
-
-        document.getElementById("eventForm").reset();
-        fetchEvents(); // Reload the list
-      });
-
-      // Load existing events
-      fetchEvents();
-
-      async function fetchEvents() {
-        const res = await fetch("http://localhost:3000/api/events");
-        const events = await res.json();
-        const list = document.getElementById("eventList");
-        list.innerHTML = "";
-        events.forEach(event => {
-          const li = document.createElement("li");
-          li.textContent = `${event.name} — ${event.date}`;
-          list.appendChild(li);
-        });
-      }
-    });
-  </script>
-</body>
-</html>
-
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="font-weight: bold; font-size: 1.5rem;">The Adjudicators</div>
+    <div>
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="#" onclick="logout
