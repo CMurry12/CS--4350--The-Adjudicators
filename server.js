@@ -192,8 +192,8 @@ app.post("/api/projects/review", async (req, res) => {
   }
 });
 app.get("/", (req, res) => {
-  res.sendFile(path.join(/Users/samuelholison/Downloads/GitHub/CS--4350--The-Adjudicators/JudgingApp/public"public","admin-analytics.html", "Judge-login.html", "Leaderboard.html", "admin-analytics.html", "admin-dashboard.html", "admin-events.html", "admin-judges.html", "admin-projects.html", "admin.js", "auth.js");
-});
+  res.sendFile(path.join(/Users/samuelholison/Downloads/GitHub/CS--4350--The-Adjudicators/JudgingApp/public"public","admin-analytics.html", "Judge-login.html", "Leaderboard.html", "admin-analytics.html", "admin-dashboard.html", "admin-events.html", "admin-judges.html", "admin-projects.html", "admin.js", "auth.js", "index.html", "judge-dashboard.html", "judge-events.html", "judge-scoring.html", "judge.html", "login.html", "profile.html");
+})
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
