@@ -13,8 +13,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "public"))); // Serve static frontend files
 
-// Multer configuration for file uploads
+// ======= MULTER CONFIG =======
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -23,6 +24,13 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+
+// ======= FRONTEND ROOT ROUTE =======
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ======= AUTH & API ROUTES =======
 
 /* STUDENT REGISTER */
 app.post("/api/student/register", async (req, res) => {
@@ -76,10 +84,7 @@ app.post("/api/judges/register", async (req, res) => {
 
   try {
     const hashed = await bcrypt.hash(password, 10);
-    await db.query("INSERT INTO judges (judgeId, password) VALUES (?, ?)", [
-      judgeId,
-      hashed,
-    ]);
+    await db.query("INSERT INTO judges (judgeId, password) VALUES (?, ?)", [judgeId, hashed]);
     res.status(201).json({ message: "Judge registered successfully" });
   } catch (err) {
     console.error("Judge register error:", err);
@@ -143,12 +148,10 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-/* GET UPCOMING EVENTS */
+/* GET EVENTS */
 app.get("/api/events", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC"
-    );
+    const [rows] = await db.query("SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC");
     res.json(rows);
   } catch (err) {
     console.error("Fetch events error:", err);
@@ -240,8 +243,8 @@ app.get("/api/leaderboard/recent", async (req, res) => {
 
     res.json({ topThree: topThreeData, others: remainingData });
   } catch (err) {
-    console.error("Leaderboard recent events error:", err);
-    res.status(500).json({ error: "Failed to fetch leaderboard by event." });
+    console.error("Leaderboard error:", err);
+    res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 });
 
