@@ -113,8 +113,10 @@
   </div>
 
   <script>
+    const API = "https://judgingapp-97rm.onrender.com";
+
     async function loadProjects() {
-      const res = await fetch("http://localhost:3000/api/projects");
+      const res = await fetch(`${API}/api/projects`);
       const projects = await res.json();
       const list = document.getElementById("projectList");
       list.innerHTML = "";
@@ -132,7 +134,7 @@
     }
 
     async function loadEvents() {
-      const res = await fetch("http://localhost:3000/api/events");
+      const res = await fetch(`${API}/api/events`);
       const events = await res.json();
       const eventSelect = document.getElementById("eventId");
       eventSelect.innerHTML = "";
@@ -152,7 +154,7 @@
       const eventId = document.getElementById("eventId").value;
       const studentId = document.getElementById("studentId").value;
 
-      const res = await fetch("http://localhost:3000/api/projects", {
+      const res = await fetch(`${API}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, description, event_id: eventId, user_id: studentId }),
@@ -167,7 +169,7 @@
     });
 
     async function deleteProject(id) {
-      const res = await fetch(`http://localhost:3000/api/projects/${id}`, {
+      const res = await fetch(`${API}/api/projects/${id}`, {
         method: "DELETE",
       });
       if (res.ok) loadProjects();
