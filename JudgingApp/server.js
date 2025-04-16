@@ -248,6 +248,30 @@ app.get("/api/leaderboard/recent", async (req, res) => {
   }
 });
 
+// GET all projects for a specific student
+app.get("/api/projects/user/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const [projects] = await db.query(
+      `SELECT 
+         p.title, 
+         p.description, 
+         p.file_path AS filename, 
+         e.name AS event_name 
+       FROM projects p 
+       JOIN events e ON p.event_id = e.id 
+       WHERE p.user_id = ?`,
+      [userId]
+    );
+
+    res.json(projects);
+  } catch (err) {
+    console.error("❌ Failed to fetch user projects:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 /* START SERVER */
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
