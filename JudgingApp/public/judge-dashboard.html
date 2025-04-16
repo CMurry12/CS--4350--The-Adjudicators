@@ -111,7 +111,7 @@
 
     async function fetchEvents() {
       try {
-        const res = await fetch(`http://localhost:3000/api/events/judge/${judge.id}`);
+        const res = await fetch(`https://judgingapp-97rm.onrender.com/api/events/judge/${judge.id}`);
         const events = await res.json();
         const container = document.getElementById("eventsContainer");
 
