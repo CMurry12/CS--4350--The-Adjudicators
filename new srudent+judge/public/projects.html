@@ -59,6 +59,13 @@
     .btn:hover {
       background-color: #2f987c;
     }
+
+    #submissionMessage {
+      margin-top: 10px;
+      text-align: center;
+      color: green;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -95,10 +102,12 @@
       <input type="file" id="file" name="file" required />
 
       <button type="submit" class="btn">Submit Project</button>
+      <p id="submissionMessage"></p>
     </form>
   </div>
 
   <script>
+    console.log("Submit Project script loaded!");
     async function loadEvents() {
       try {
         const res = await fetch("http://localhost:3000/api/events");
@@ -119,9 +128,13 @@
 
     document.getElementById("projectForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      console.log("Form is submitting...");
       const form = document.getElementById("projectForm");
       const formData = new FormData(form);
       const user = JSON.parse(localStorage.getItem("user"));
+
+      const submitButton = document.querySelector(".btn");
+      const message = document.getElementById("submissionMessage");
 
       if (!user || !user.id) {
         alert("Please log in first.");
@@ -129,7 +142,10 @@
         return;
       }
 
-      formData.append("userId", user.id); // If needed by backend
+      formData.append("userId", user.id);
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
 
       try {
         const res = await fetch("http://localhost:3000/api/projects/upload", {
@@ -137,18 +153,38 @@
           body: formData
         });
 
-        const data = await res.json();
+        let data;
+            try {
+              data = await res.json();
+            } catch (jsonErr) {
+              console.error("❌ Failed to parse response JSON:", jsonErr);
+              message.style.color = "red";
+              message.textContent = "Server response was not valid JSON.";
+              return;
+            }
 
-        if (!res.ok) {
-          alert(data.error || "Project submission failed.");
-        } else {
-          alert("Project submitted successfully!");
-          form.reset();
-          window.location.href = "student-dashboard.html";
-        }
+            console.log("Upload response:", data);
+
+            if (!res.ok) {
+              message.style.color = "red";
+              message.textContent = data?.error || "Project submission failed.";
+            } else {
+              alert("✅ Project submitted successfully!");
+              window.location.href = "student-dashboard.html";
+
+              setTimeout(() => {
+                window.location.href = "student-dashboard.html";
+              }, 1500);
+            }
+
+        
       } catch (err) {
         console.error("Upload failed:", err);
-        alert("Upload failed. Please try again.");
+        message.style.color = "red";
+        message.textContent = "Upload failed. Please try again.";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Project";
       }
     });
 
@@ -156,3 +192,4 @@
   </script>
 </body>
 </html>
+
