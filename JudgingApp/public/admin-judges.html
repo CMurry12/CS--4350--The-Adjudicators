@@ -118,7 +118,7 @@
 
   <script>
     async function loadJudges() {
-      const res = await fetch("http://localhost:3000/api/judges");
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges");
       const judges = await res.json();
 
       const judgeList = document.getElementById("judgeList");
@@ -143,7 +143,7 @@
     }
 
     async function loadEvents() {
-      const res = await fetch("http://localhost:3000/api/events");
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
       const events = await res.json();
       const eventSelect = document.getElementById("eventSelect");
       eventSelect.innerHTML = "";
@@ -157,7 +157,7 @@
     }
 
     async function removeJudge(id) {
-      const res = await fetch(`http://localhost:3000/api/judges/${id}`, {
+      const res = await fetch(`https://judgingapp-97rm.onrender.com/api/judges/${id}`, {
         method: "DELETE",
       });
       if (res.ok) loadJudges();
@@ -169,7 +169,7 @@
       const id = document.getElementById("newJudgeId").value;
       const password = document.getElementById("newJudgePass").value;
 
-      const res = await fetch("http://localhost:3000/api/judges", {
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, password }),
@@ -188,7 +188,7 @@
       const judgeId = document.getElementById("judgeSelect").value;
       const eventId = document.getElementById("eventSelect").value;
 
-      const res = await fetch("http://localhost:3000/api/judge_event", {
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judge_event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ judgeId, eventId }),
