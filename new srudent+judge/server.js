@@ -7,7 +7,7 @@ const path = require("path");
 const fs = require("fs");
 const db = require("./db");
 const projectRoutes = require('./routes/projects'); // Adjust the path if needed
-console.log("User info from localStorage:", user);
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
