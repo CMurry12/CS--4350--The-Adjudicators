@@ -6,6 +6,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("./db");
+const projectRoutes = require('./routes/projects'); // Adjust the path if needed
+console.log("User info from localStorage:", user);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "public"))); // Serve static frontend files
+app.use("/api/projects", projectRoutes);
+
 
 // ======= MULTER CONFIG =======
 const storage = multer.diskStorage({
@@ -247,6 +251,28 @@ app.get("/api/leaderboard/recent", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 });
+
+// GET all projects for a specific student
+// In server.js or routes/projects.js
+
+app.get("/api/projects/user/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const [projects] = await db.query(
+      "SELECT title, description, file_path AS filename FROM projects WHERE user_id = ?",
+      [userId]
+    );
+
+    // Respond with the projects array
+    res.json(projects);
+  } catch (err) {
+    console.error("❌ Failed to fetch user projects:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 /* START SERVER */
 app.listen(PORT, () => {
