@@ -78,12 +78,11 @@
   </div>
 
   <script>
-    // Optional: fallback user object for demo/testing
     const judge = JSON.parse(localStorage.getItem("user")) || { id: "guest" };
 
     async function fetchAllEvents() {
       try {
-        const res = await fetch("http://localhost:3000/api/events");
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
         const events = await res.json();
         const container = document.getElementById("eventsList");
 
