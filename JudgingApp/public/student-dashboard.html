@@ -64,7 +64,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Welcome, Student!</h2>
+    <h2>Welcome, ${user.name}!</h2>
 
     <section id="submittedProjects">
       <h3>Your Submitted Projects</h3>
@@ -86,10 +86,13 @@
 
   <script>
     const user = JSON.parse(localStorage.getItem("user"));
+    document.querySelector("h2").textContent = `Welcome, ${user.name}!`;
+
+    const API_BASE_URL = "https://judgingapp-97rm.onrender.com";
 
     async function loadProjects() {
       try {
-        const res = await fetch(`http://localhost:3000/api/projects/student/${user.id}`);
+        const res = await fetch(`${API_BASE_URL}/api/projects/user/${user.id}`);
         const projects = await res.json();
 
         const container = document.getElementById("projectList");
@@ -104,8 +107,8 @@
           div.innerHTML = `
             <h4>${project.title}</h4>
             <p>${project.description}</p>
-            <p><strong>Event ID:</strong> ${project.event_id}</p>
-            <a href="http://localhost:3000/uploads/${project.file_path}" target="_blank" style="color: gold;">📄 View File</a>
+            <p><strong>Event:</strong> ${project.event_name}</p>
+            <a href="${API_BASE_URL}/uploads/${project.filename}" target="_blank" style="color: gold;">📄 View File</a>
           `;
           container.appendChild(div);
         });
@@ -119,4 +122,3 @@
   </script>
 </body>
 </html>
-
