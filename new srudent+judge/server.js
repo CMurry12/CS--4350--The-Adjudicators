@@ -271,8 +271,6 @@ app.get("/api/projects/user/:id", async (req, res) => {
       [userId]
     );
 
-
-    // Respond with the projects array
     res.json(projects);
   } catch (err) {
     console.error("❌ Failed to fetch user projects:", err);
