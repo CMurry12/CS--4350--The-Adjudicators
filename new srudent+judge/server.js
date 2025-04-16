@@ -260,9 +260,17 @@ app.get("/api/projects/user/:id", async (req, res) => {
 
   try {
     const [projects] = await db.query(
-      "SELECT title, description, file_path AS filename FROM projects WHERE user_id = ?",
+      `SELECT 
+         p.title, 
+         p.description, 
+         p.file_path AS filename, 
+         e.name AS event_name 
+       FROM projects p 
+       JOIN events e ON p.event_id = e.id 
+       WHERE p.user_id = ?`,
       [userId]
     );
+
 
     // Respond with the projects array
     res.json(projects);
