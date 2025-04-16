@@ -1,17 +1,22 @@
 const searchBtn = document.getElementById("searchBtn");
+
 if (searchBtn) {
   searchBtn.addEventListener("click", () => {
-    const query = document.getElementById("searchInput").value;
+    const query = document.getElementById("searchInput").value.trim();
     const eventsList = document.getElementById("eventsList");
+
     eventsList.innerHTML = "Searching...";
+
     const data = [
       { id: 1, name: "Hackathon 2025", description: "CS event" },
       { id: 2, name: "Science Fair", description: "College expo" }
     ].filter(evt => evt.name.toLowerCase().includes(query.toLowerCase()));
+
     if (data.length === 0) {
       eventsList.innerHTML = "<p>No events found.</p>";
       return;
     }
+
     let html = "<ul>";
     data.forEach(evt => {
       html += `
@@ -22,6 +27,7 @@ if (searchBtn) {
       `;
     });
     html += "</ul>";
+
     eventsList.innerHTML = html;
   });
 }
