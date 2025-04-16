@@ -64,7 +64,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Welcome, Student!</h2>
+    <h2>Welcome, ${user.name}!</h2>
 
     <section id="submittedProjects">
       <h3>Your Submitted Projects</h3>
@@ -86,6 +86,8 @@
 
   <script>
     const user = JSON.parse(localStorage.getItem("user"));
+    document.querySelector("h2").textContent = `Welcome, ${user.name}!`;
+
 
     async function loadProjects() {
       try {
@@ -119,3 +121,4 @@
   </script>
 </body>
 </html>
+
