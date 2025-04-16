@@ -52,7 +52,7 @@
 
   <script>
     async function loadStats() {
-      const res = await fetch("http://localhost:3000/api/admin/analytics");
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/admin/analytics");
       const data = await res.json();
 
       document.getElementById("studentCount").textContent = data.totalStudents;
