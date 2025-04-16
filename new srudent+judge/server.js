@@ -6,7 +6,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("./db");
-const projectRoutes = require('./routes/projects'); // Adjust the path if needed
+
 
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "public"))); // Serve static frontend files
-app.use("/api/projects", projectRoutes);
+
 
 
 // ======= MULTER CONFIG =======
