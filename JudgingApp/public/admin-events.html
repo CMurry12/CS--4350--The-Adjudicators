@@ -119,63 +119,62 @@
     <ul id="eventList"></ul>
   </div>
 
- <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("eventForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("eventForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      const name = document.getElementById("eventName").value;
-      const date = document.getElementById("eventDate").value;
+        const name = document.getElementById("eventName").value;
+        const date = document.getElementById("eventDate").value;
 
-      try {
-        const res = await fetch("http://localhost:3000/api/events", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, date }),
-        });
+        try {
+          const res = await fetch("https://judgingapp-97rm.onrender.com/api/events", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, date }),
+          });
 
-        const data = await res.json();
+          const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Failed to add event.");
+          if (!res.ok) {
+            throw new Error(data.error || "Failed to add event.");
+          }
+
+          alert(data.message || "Event added successfully!");
+          document.getElementById("eventForm").reset();
+          fetchEvents(); // Refresh event list
+        } catch (err) {
+          console.error("Event add error:", err);
+          alert("❌ " + err.message);
         }
+      });
 
-        alert(data.message || "Event added successfully!");
-        document.getElementById("eventForm").reset();
-        fetchEvents(); // Refresh event list
-      } catch (err) {
-        console.error("Event add error:", err);
-        alert("❌ " + err.message);
+      fetchEvents();
+
+      async function fetchEvents() {
+        try {
+          const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
+          const events = await res.json();
+          const list = document.getElementById("eventList");
+          list.innerHTML = "";
+
+          events.forEach(event => {
+            const li = document.createElement("li");
+            li.textContent = `${event.name} — ${event.date}`;
+            list.appendChild(li);
+          });
+        } catch (err) {
+          console.error("Failed to fetch events:", err);
+          document.getElementById("eventList").innerHTML = "<li>Error loading events</li>";
+        }
       }
     });
 
-    fetchEvents();
-
-    async function fetchEvents() {
-      try {
-        const res = await fetch("http://localhost:3000/api/events");
-        const events = await res.json();
-        const list = document.getElementById("eventList");
-        list.innerHTML = "";
-
-        events.forEach(event => {
-          const li = document.createElement("li");
-          li.textContent = `${event.name} — ${event.date}`;
-          list.appendChild(li);
-        });
-      } catch (err) {
-        console.error("Failed to fetch events:", err);
-        document.getElementById("eventList").innerHTML = "<li>Error loading events</li>";
-      }
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
     }
-  });
-
-  function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-  }
-</script>
-
+  </script>
 
 </body>
 </html>
