@@ -195,15 +195,30 @@
 </div>
 
 <script>
-  function saveProfile() {
+  async function saveProfile() {
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const phone = document.getElementById("phone").value;
     const address = document.getElementById("address").value;
 
-    localStorage.setItem("userProfile", JSON.stringify({ name, email, phone, address }));
-    document.getElementById("saveMsg").textContent = "Profile updated successfully!";
-    document.getElementById("sidebarName").textContent = name;
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.id;
+
+    try {
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/user/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, name, email, phone, address }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Save failed");
+
+      document.getElementById("saveMsg").textContent = "✅ Profile updated successfully!";
+      document.getElementById("sidebarName").textContent = name;
+    } catch (err) {
+      document.getElementById("saveMsg").textContent = "❌ " + err.message;
+    }
   }
 
   function changeProfilePic(event) {
