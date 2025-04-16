@@ -79,7 +79,7 @@
 
     async function loadEvents() {
       try {
-        const res = await fetch("http://localhost:3000/api/events");
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
         const events = await res.json();
         const select = document.getElementById("eventSelect");
         events.forEach(event => {
@@ -100,7 +100,7 @@
 
     async function loadProjects(eventId) {
       try {
-        const res = await fetch(`http://localhost:3000/api/projects/event/${eventId}`);
+        const res = await fetch(`https://judgingapp-97rm.onrender.com/api/projects/event/${eventId}`);
         const projects = await res.json();
 
         const container = document.getElementById("projectList");
@@ -117,7 +117,7 @@
           div.innerHTML = `
             <h3>${project.title}</h3>
             <p><strong>Description:</strong> ${project.description}</p>
-            <p><a href="http://localhost:3000/uploads/${project.file_path}" target="_blank" style="color:#ffd700;">📄 View File</a></p>
+            <p><a href="https://judgingapp-97rm.onrender.com/uploads/${project.file_path}" target="_blank" style="color:#ffd700;">📄 View File</a></p>
 
             <label>Creativity (0–10)</label>
             <input type="number" id="creativity-${project.id}" min="0" max="10" required>
@@ -156,7 +156,7 @@
       const design = document.getElementById(`design-${projectId}`).value;
       const feedback = document.getElementById(`feedback-${projectId}`).value;
 
-      const res = await fetch("http://localhost:3000/api/projects/review", {
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/projects/review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
