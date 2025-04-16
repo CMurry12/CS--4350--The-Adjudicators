@@ -2,133 +2,180 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judge Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background: linear-gradient(to right, #667eea, #764ba2);
-      font-family: Arial, sans-serif;
-      color: #fff;
-      padding: 60px 20px 20px;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 10px;
-    }
-
-    h2, h3, h4 {
+    .form-container {
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
       text-align: center;
-      color: #fff;
     }
 
-    .event-section {
-      margin-bottom: 40px;
+    h2 {
+      font-size: 1.75rem;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
     }
 
-    .project-item {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      border-left: 5px solid transparent;
+    label {
+      display: block;
+      margin-top: 1.25rem;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      text-align: left;
+      color: #334155;
     }
 
-    .project-item.highlight {
-      border-left-color: gold;
-      background-color: rgba(255, 255, 255, 0.25);
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      transition: border-color 0.2s;
     }
 
-    .home-btn {
-      display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 20px;
-      background-color: #ffffff;
-      color: #764ba2;
-      border-radius: 6px;
+    input:focus {
+      border-color: #2563eb;
+      outline: none;
+    }
+
+    .btn {
+      margin-top: 2rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      width: 100%;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .form-note {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #475569;
+    }
+
+    .form-note a {
+      color: #2563eb;
       text-decoration: none;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      font-weight: 500;
     }
 
-    .home-btn:hover {
-      background-color: #f4f4f4;
-    }
-
-    a.view-link {
-      color: #ffd700;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    a.view-link:hover {
+    .form-note a:hover {
       text-decoration: underline;
     }
+
+    #loginError {
+      color: #dc2626;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    .home-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.85rem;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+}
+
+.home-button:hover {
+  background: #ffffff;
+  color: #2563eb;
+}
+
+
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="student-dashboard.html" class="home-btn">← Home</a>
-    <h2>🏆 Project Leaderboard</h2>
+  <a href="index.html" class="home-button">Home</a>
 
-    <div id="leaderboardContent"></div>
+  <div class="form-container">
+    <h2>Judge Login</h2>
+    <form id="loginForm">
+      <label for="userId">Judge ID</label>
+      <input type="text" id="judgeId" name="judgeId" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit" class="btn">Login</button>
+      <p id="loginError"></p>
+    </form>
+
+    <p class="form-note">
+      Not registered? <a href="register.html">Create an account</a><br />
+      <a href="login.html">← Back </a>
+    </p>
   </div>
 
+
   <script>
-    async function loadLeaderboard() {
-      try {
-        const res = await fetch("http://localhost:3000/api/leaderboard/recent");
-        const data = await res.json();
-        const container = document.getElementById("leaderboardContent");
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        const renderEvents = (events, title) => {
-          if (!events.length) return;
-          const titleEl = document.createElement("h3");
-          titleEl.textContent = title;
-          container.appendChild(titleEl);
+      const judgeId = document.getElementById("judgeId").value;
+      const password = document.getElementById("password").value;
+      const loginError = document.getElementById("loginError");
 
-          events.forEach(event => {
-            const section = document.createElement("div");
-            section.className = "event-section";
-
-            const header = document.createElement("h4");
-            header.textContent = `${event.event_name} (${event.date})`;
-            section.appendChild(header);
-
-            if (!event.projects.length) {
-              section.innerHTML += "<p>No projects reviewed yet.</p>";
-            } else {
-              event.projects.forEach((project, index) => {
-                const div = document.createElement("div");
-                div.className = "project-item";
-                if (index === 0) div.classList.add("highlight");
-
-                div.innerHTML = `
-                  <strong>${project.rank ? project.rank + ' ' : ''}${project.title}</strong><br>
-                  Final Score: <strong>${project.final_score}</strong><br>
-                  <a href="http://localhost:3000/uploads/${project.file_path}" target="_blank" class="view-link">📄 View File</a>
-                `;
-                section.appendChild(div);
-              });
-            }
-
-            container.appendChild(section);
-          });
-        };
-
-        renderEvents(data.topThree, "🔥 Most Recent Events");
-        renderEvents(data.others, "📚 Past Events");
-
-      } catch (err) {
-        console.error("Failed to load leaderboard:", err);
-        document.getElementById("leaderboardContent").innerHTML = "<p>Error loading leaderboard.</p>";
+      if (!judgeId || !password) {
+        loginError.textContent = "Judge ID and password required";
+        return;
       }
-    }
 
-    loadLeaderboard();
+      try {
+        const res = await fetch("http://localhost:3000/api/judges/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judgeId, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          loginError.textContent = data.error || "Login failed.";
+        } else {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "judge-dashboard.html";
+        }
+      } catch (err) {
+        loginError.textContent = "Server error.";
+      }
+    });
   </script>
 </body>
 </html>
