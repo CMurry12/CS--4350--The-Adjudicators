@@ -67,25 +67,24 @@
    text-decoration: none;
   }
   .home-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 0.85rem;
-  color: #ffffff;
-  border: 1.5px solid #ffffff;
-  padding: 0.3rem 0.75rem;
-  border-radius: 0.375rem;
-  text-decoration: none;
-  font-weight: 500;
-  background: transparent;
-  transition: background 0.2s, color 0.2s;
-}
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.85rem;
+    color: #ffffff;
+    border: 1.5px solid #ffffff;
+    padding: 0.3rem 0.75rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-weight: 500;
+    background: transparent;
+    transition: background 0.2s, color 0.2s;
+  }
 
-.home-button:hover {
-  background: #ffffff;
-  color: #2563eb;
-}
-
+  .home-button:hover {
+    background: #ffffff;
+    color: #2563eb;
+  }
  </style>
 </head>
 <body>
@@ -103,37 +102,41 @@
   </form>
   <p class="form-note">Already have an account? <a href="judge-login.html">Login</a></p>
  </div>
+
  <script>
+  const API_BASE_URL = "https://judgingapp-97rm.onrender.com"; // updated to live backend
+
   document.getElementById("registerForm").addEventListener("submit", async (e) => {
-   e.preventDefault();
-   const judgeId = document.getElementById("judgeId").value;
-   const password = document.getElementById("password").value;
-   const confirmPassword = document.getElementById("confirmPassword").value;
-   const passwordError = document.getElementById("passwordError");
+    e.preventDefault();
+    const judgeId = document.getElementById("judgeId").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const passwordError = document.getElementById("passwordError");
 
-   if (password !== confirmPassword) {
-    passwordError.textContent = "Passwords do not match.";
-    return;
-   }
-
-   try {
-    const res = await fetch("http://localhost:3000/api/judge/register", {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({ judgeId, password })
-    });
-    const data = await res.json();
-    if (!res.ok) {
-     passwordError.textContent = data.error || "Registration failed.";
-    } else {
-     alert("Registration successful. You can now log in.");
-     window.location.href = "judge-login.html";
+    if (password !== confirmPassword) {
+      passwordError.textContent = "Passwords do not match.";
+      return;
     }
-   } catch (err) {
-    passwordError.textContent = "Server error. Try again.";
-   }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ judgeId, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        passwordError.textContent = data.error || "Registration failed.";
+      } else {
+        alert("Registration successful. You can now log in.");
+        window.location.href = "judge-login.html";
+      }
+    } catch (err) {
+      passwordError.textContent = "Server error. Try again.";
+    }
   });
  </script>
 </body>
 </html>
-
