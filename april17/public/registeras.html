@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      padding: 2.5rem 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: #1f2937;
+    }
+
+    .login-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .login-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: #f4f4f7;
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      border: 2px solid transparent;
+    }
+
+    .login-box:hover {
+      transform: translateY(-3px);
+      background: #e5e7eb;
+    }
+
+    .login-box.judge {
+      border-color: #4f46e5;
+      color: #4f46e5;
+    }
+
+    .login-box.student {
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .home-button {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: 1.5px solid #ffffff;
+      padding: 0.4rem 0.9rem;
+      border-radius: 0.375rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .home-button:hover {
+      background: #ffffff;
+      color: #4f46e5;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 0 1rem;
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="home-button">Home</a>
+
+  <div class="container">
+    <h1>Register As</h1>
+    <div class="login-options">
+      <div class="login-box judge" onclick="location.href='register.html'">
+        <i data-feather="user-plus"></i> Judge
+      </div>
+      <div class="login-box student" onclick="location.href='student-register.html'">
+        <i data-feather="book"></i> Student
+      </div>
+    </div>
+  </div>
+
+  <script>
+    feather.replace();
+  </script>
+
+</body>
+</html>

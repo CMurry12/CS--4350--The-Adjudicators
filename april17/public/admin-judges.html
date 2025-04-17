@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Judges</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #232526, #414345);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding-top: 100px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #ffd700;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .list-group {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .list-item {
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">The Adjudicators</div>
+    <div class="nav">
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="login.html" onclick="localStorage.clear()">Logout</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Judge Manager</h2>
+
+    <form id="addJudgeForm">
+      <input type="text" id="newJudgeId" placeholder="Judge ID (email or name)">
+      <input type="password" id="newJudgePass" placeholder="Password">
+      <button type="submit" class="btn">Add Judge</button>
+    </form>
+
+    <form id="assignForm">
+      <select id="judgeSelect"></select>
+      <select id="eventSelect"></select>
+      <button type="submit" class="btn">Assign Judge to Event</button>
+    </form>
+
+    <div id="judgeList" class="list-group"></div>
+  </div>
+
+  <script>
+    async function loadJudges() {
+      try {
+        const res = await fetch("http://localhost:3000/api/judges");
+        const judges = await res.json();
+  
+        const judgeSelect = document.getElementById("judgeSelect");
+        judgeSelect.innerHTML = ""; // Clear dropdown
+  
+        judges.forEach(judge => {
+          const option = document.createElement("option");
+          option.value = judge.id; // 👈 Send numeric ID to backend
+          option.textContent = `${judge.judgeId}`; // 👈 Display-friendly label
+          judgeSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading judges:", err);
+      }
+    }
+  
+    async function loadEvents() {
+      try {
+        const res = await fetch("http://localhost:3000/api/events");
+        const events = await res.json();
+  
+        const eventSelect = document.getElementById("eventSelect");
+        eventSelect.innerHTML = "";
+  
+        events.forEach(event => {
+          const option = document.createElement("option");
+          option.value = event.id; // 👈 Numeric ID
+          option.textContent = `${event.name}`;
+          eventSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading events:", err);
+      }
+    }
+  
+    // Assign judge to event
+    document.getElementById("assignForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+  
+      const judgeId = document.getElementById("judgeSelect").value;
+      const eventId = document.getElementById("eventSelect").value;
+  
+      try {
+        const res = await fetch("http://localhost:3000/api/judge_event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judgeId, eventId })
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) throw new Error(data.error || "Assignment failed");
+  
+        alert("✅ Judge assigned to event successfully!");
+      } catch (err) {
+        console.error("Assignment failed:", err);
+        alert("Failed to assign judge");
+      }
+    });
+  
+    // Call both on page load
+    loadJudges();
+    loadEvents();
+  </script>  
+</body>
+</html>
