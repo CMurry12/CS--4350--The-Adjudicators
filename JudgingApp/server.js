@@ -87,7 +87,9 @@ app.post("/api/student/login", async (req, res) => {
 // === JUDGE REGISTER ===
 app.post("/api/judges/register", async (req, res) => {
   const { judgeId, password } = req.body;
-  if (!judgeId || !password) return res.status(400).json({ error: "Judge ID and password required." });
+  if (!judgeId || !password) {
+    return res.status(400).json({ error: "Judge ID and password required." });
+  }
 
   try {
     const hashed = await bcrypt.hash(password, 10);
@@ -95,6 +97,7 @@ app.post("/api/judges/register", async (req, res) => {
     res.status(201).json({ message: "Judge registered successfully" });
   } catch (err) {
     console.error("❌ Judge register error:", err.message);
+    console.error(err); // <- FULL error log
     res.status(500).json({ error: "Server error during judge registration" });
   }
 });
