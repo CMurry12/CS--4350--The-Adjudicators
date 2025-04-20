@@ -137,48 +137,80 @@
   //     passwordError.textContent = "Server error. Try again.";
   //   }
   // });
+
   document.getElementById("registerForm").addEventListener("submit", async (e) => {
-   e.preventDefault();
-   const judgeId = document.getElementById("judgeId").value;
-   const password = document.getElementById("password").value;
-   const confirmPassword = document.getElementById("confirmPassword").value;
-   const passwordError = document.getElementById("passwordError");
+    e.preventDefault();
+    
+    // Get form values
+    const judgeId = document.getElementById("judgeId").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const passwordError = document.getElementById("passwordError");
+    
+    // Clear previous error messages
+    passwordError.textContent = "";
+    
+    // Client-side validation
+    if (!judgeId) {
+      passwordError.textContent = "Judge ID is required";
+      return;
+    }
+    
+    if (!password) {
+      passwordError.textContent = "Password is required";
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      passwordError.textContent = "Passwords do not match.";
+      return;
+    }
+    
+    try {
+      console.log("Submitting:", { judgeId, password: "****" }); // For debugging
+      
+      const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ 
+          judgeId: judgeId,
+          password: password
+        }),
+      });
+      
+      // Log response for debugging
+      console.log("Status:", res.status);
+      
+      // Try to parse the response as JSON
+      let data;
+      try {
+        data = await res.json();
+        console.log("Response data:", data);
+      } catch (jsonError) {
+        console.error("Could not parse JSON response:", jsonError);
+        // If the response isn't valid JSON, get the text instead
+        const textResponse = await res.text();
+        console.log("Text response:", textResponse);
+        data = { error: "Server returned invalid response" };
+      }
+      
+      if (!res.ok) {
+        passwordError.textContent = data.error || `Registration failed (${res.status})`;
+      } else {
+        alert("Registration successful. You can now log in.");
+        window.location.href = "judge-login.html";
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      passwordError.textContent = "Network error. Check your connection and try again.";
+    }
+  });
+
+
  
-   if (password !== confirmPassword) {
-     passwordError.textContent = "Passwords do not match.";
-     return;
-   }
- 
-   try {
-     // Replace this line:
-     // const body = JSON.stringify({ judgeId, password });
-     
-     // With this new structure:
-     const body = JSON.stringify({ 
-       judge: { 
-         judgeId: judgeId, 
-         password: password 
-       } 
-     });
- 
-     const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: body,  // Use the new body variable here
-     });
- 
-     const data = await res.json();
- 
-     if (!res.ok) {
-       passwordError.textContent = data.error || "Registration failed.";
-     } else {
-       alert("Registration successful. You can now log in.");
-       window.location.href = "judge-login.html";
-     }
-   } catch (err) {
-     passwordError.textContent = "Server error. Try again.";
-   }
- });
  </script>
 </body>
 </html>
