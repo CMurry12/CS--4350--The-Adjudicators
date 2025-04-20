@@ -106,37 +106,79 @@
  <script>
   const API_BASE_URL = "https://judgingapp-97rm.onrender.com"; // updated to live backend
 
+  // document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  //   e.preventDefault();
+  //   const judgeId = document.getElementById("judgeId").value;
+  //   const password = document.getElementById("password").value;
+  //   const confirmPassword = document.getElementById("confirmPassword").value;
+  //   const passwordError = document.getElementById("passwordError");
+
+  //   if (password !== confirmPassword) {
+  //     passwordError.textContent = "Passwords do not match.";
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ judgeId, password }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     if (!res.ok) {
+  //       passwordError.textContent = data.error || "Registration failed.";
+  //     } else {
+  //       alert("Registration successful. You can now log in.");
+  //       window.location.href = "judge-login.html";
+  //     }
+  //   } catch (err) {
+  //     passwordError.textContent = "Server error. Try again.";
+  //   }
+  // });
   document.getElementById("registerForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const judgeId = document.getElementById("judgeId").value;
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-    const passwordError = document.getElementById("passwordError");
-
-    if (password !== confirmPassword) {
-      passwordError.textContent = "Passwords do not match.";
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ judgeId, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        passwordError.textContent = data.error || "Registration failed.";
-      } else {
-        alert("Registration successful. You can now log in.");
-        window.location.href = "judge-login.html";
-      }
-    } catch (err) {
-      passwordError.textContent = "Server error. Try again.";
-    }
-  });
+   e.preventDefault();
+   const judgeId = document.getElementById("judgeId").value;
+   const password = document.getElementById("password").value;
+   const confirmPassword = document.getElementById("confirmPassword").value;
+   const passwordError = document.getElementById("passwordError");
+ 
+   if (password !== confirmPassword) {
+     passwordError.textContent = "Passwords do not match.";
+     return;
+   }
+ 
+   try {
+     // Replace this line:
+     // const body = JSON.stringify({ judgeId, password });
+     
+     // With this new structure:
+     const body = JSON.stringify({ 
+       judge: { 
+         judgeId: judgeId, 
+         password: password 
+       } 
+     });
+ 
+     const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: body,  // Use the new body variable here
+     });
+ 
+     const data = await res.json();
+ 
+     if (!res.ok) {
+       passwordError.textContent = data.error || "Registration failed.";
+     } else {
+       alert("Registration successful. You can now log in.");
+       window.location.href = "judge-login.html";
+     }
+   } catch (err) {
+     passwordError.textContent = "Server error. Try again.";
+   }
+ });
  </script>
 </body>
 </html>
