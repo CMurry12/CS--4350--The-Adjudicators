@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Submit Project</title>
-  <link rel="stylesheet" href="../Styles/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       background: linear-gradient(to right, #43cea2, #185a9d);
@@ -107,6 +107,11 @@
   </div>
 
   <script>
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
     console.log("Submit Project script loaded!");
     async function loadEvents() {
       try {
@@ -129,20 +134,17 @@
     document.getElementById("projectForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       console.log("Form is submitting...");
+
       const form = document.getElementById("projectForm");
       const formData = new FormData(form);
       const user = JSON.parse(localStorage.getItem("user"));
+      formData.append("userId", user.id);
+
+      console.log("Event ID:", formData.get("eventId"));
+      console.log("User ID:", formData.get("userId"));
 
       const submitButton = document.querySelector(".btn");
       const message = document.getElementById("submissionMessage");
-
-      if (!user || !user.id) {
-        alert("Please log in first.");
-        window.location.href = "login.html";
-        return;
-      }
-
-      formData.append("userId", user.id);
 
       submitButton.disabled = true;
       submitButton.textContent = "Submitting...";
@@ -171,10 +173,6 @@
         } else {
           alert("✅ Project submitted successfully!");
           window.location.href = "student-dashboard.html";
-
-          setTimeout(() => {
-            window.location.href = "student-dashboard.html";
-          }, 1500);
         }
 
       } catch (err) {
