@@ -2,110 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Judge: View Events</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judge Events</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       background: linear-gradient(to right, #667eea, #764ba2);
-      font-family: 'Segoe UI', sans-serif;
-      padding: 100px 20px 40px;
-      color: #fff;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: white;
     }
 
-    .header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
+    nav {
+      background: linear-gradient(to right, #000000, #232526);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 1000;
+      padding: 15px 40px;
     }
 
-    .header__logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .header__nav a {
-      color: #fff;
+    nav a {
+      color: white;
       text-decoration: none;
+      font-weight: bold;
       margin-left: 20px;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 30px;
-      border-radius: 12px;
-    }
-
-    h2 {
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 90vh;
+      padding: 40px 20px;
       text-align: center;
-      margin-bottom: 20px;
     }
 
-    .event-item {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 15px;
+    h1 {
+      margin-bottom: 40px;
     }
 
-    .event-item h3 {
-      margin-bottom: 5px;
+    .event-card {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+
+    .event-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.5rem;
+    }
+
+    .event-card p {
+      margin: 5px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #ffd700;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      background-color: #f4c400;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .status.Upcoming::before {
+      content: "🟢";
+    }
+
+    .status.Ongoing::before {
+      content: "🟡";
+    }
+
+    .status.Completed::before {
+      content: "🔵";
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header__logo">The Adjudicators</div>
-    <nav class="header__nav">
-      <a href="judge-dashboard.html">Dashboard</a>
-      <a href="login.html" onclick="localStorage.clear()">Logout</a>
-    </nav>
-  </header>
 
-  <div class="container">
-    <h2>All Judging Events</h2>
+  <!-- Navigation -->
+  <nav>
+    <div style="font-weight: bold; font-size: 1.5rem; color: #4c6ef5;">The Adjudicators</div>
+    <div>
+      <a href="judge-dashboard.html">Dashboard</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="main-container">
+    <h1>Judge Events</h1>
     <div id="eventsList"></div>
   </div>
 
   <script>
-    const judge = JSON.parse(localStorage.getItem("user")) || { id: "guest" };
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
 
-    async function fetchAllEvents() {
+    async function loadEvents() {
       try {
         const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
         const events = await res.json();
-        const container = document.getElementById("eventsList");
+        const list = document.getElementById("eventsList");
+        list.innerHTML = "";
 
-        if (!Array.isArray(events) || events.length === 0) {
-          container.innerHTML = "<p>No events have been posted yet.</p>";
-          return;
-        }
+        const today = new Date();
 
         events.forEach(event => {
+          const eventDate = new Date(event.date);
+          let statusClass = "Upcoming";
+
+          if (eventDate.toDateString() === today.toDateString()) {
+            statusClass = "Ongoing";
+          } else if (eventDate < today) {
+            statusClass = "Completed";
+          }
+
           const div = document.createElement("div");
-          div.className = "event-item";
+          div.className = "event-card";
           div.innerHTML = `
-            <h3>${event.name}</h3>
-            <p><strong>Date:</strong> ${event.date?.split('T')[0] || "TBA"}</p>
+            <h2>${event.name}</h2>
+            <p>📅 ${event.date}</p>
+            <p class="status ${statusClass}">Status: ${statusClass}</p>
+            <a href="judge-scoring.html?eventId=${event.id}" class="btn">View Projects</a>
           `;
-          container.appendChild(div);
+
+          // Optional: Add leaderboard link if event is completed
+          if (statusClass === "Completed") {
+            const leaderboardLink = document.createElement("a");
+            leaderboardLink.href = "leaderboard.html";
+            leaderboardLink.className = "btn";
+            leaderboardLink.style.marginLeft = "10px";
+            leaderboardLink.textContent = "Leaderboard";
+            div.appendChild(leaderboardLink);
+          }
+
+          list.appendChild(div);
         });
       } catch (err) {
-        document.getElementById("eventsList").innerHTML = "<p style='color: red;'>Failed to load events.</p>";
+        console.error("Error loading events:", err);
+        document.getElementById("eventsList").innerHTML = "<p>Failed to load events.</p>";
       }
     }
 
-    fetchAllEvents();
+    loadEvents();
   </script>
+
 </body>
 </html>
