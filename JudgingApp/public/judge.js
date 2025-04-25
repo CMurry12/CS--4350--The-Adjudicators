@@ -2,7 +2,7 @@ const searchBtn = document.getElementById("searchBtn");
 
 if (searchBtn) {
   searchBtn.addEventListener("click", () => {
-    const query = document.getElementById("searchInput").value.trim();
+    const query = document.getElementById("searchInput").value;
     const eventsList = document.getElementById("eventsList");
 
     eventsList.innerHTML = "Searching...";
@@ -27,7 +27,6 @@ if (searchBtn) {
       `;
     });
     html += "</ul>";
-
     eventsList.innerHTML = html;
   });
 }
