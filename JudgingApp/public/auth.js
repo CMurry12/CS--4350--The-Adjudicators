@@ -1,3 +1,5 @@
+const API_URL = "https://judgingapp-97rm.onrender.com/api";
+
 // ==============================
 // JUDGE LOGIN
 const judgeLoginForm = document.getElementById("loginForm");
@@ -9,7 +11,7 @@ if (judgeLoginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges/login", {
+      const res = await fetch(`${API_URL}/judges/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ judgeId, password }),
@@ -46,7 +48,7 @@ if (judgeRegisterForm) {
     }
 
     try {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges/register", {
+      const res = await fetch(`${API_URL}/judges/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ judgeId, password }),
@@ -77,7 +79,7 @@ if (studentLoginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/student/login", {
+      const res = await fetch(`${API_URL}/student/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -116,7 +118,7 @@ if (studentRegisterForm) {
     }
 
     try {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/student/register", {
+      const res = await fetch(`${API_URL}/student/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
