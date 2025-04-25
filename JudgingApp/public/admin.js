@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://judgingapp-97rm.onrender.com/api';
 
 function checkAuth() {
   const token = localStorage.getItem('token');
@@ -73,7 +73,7 @@ if (saveJudgeBtn) {
     try {
       const res = await fetch(`${API_URL}/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }, // no token needed
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password, role: 'judge' })
       });
 
@@ -87,7 +87,6 @@ if (saveJudgeBtn) {
     }
   });
 }
-
 
 const addProjectBtn = document.getElementById("addProjectBtn");
 const projectForm = document.getElementById("projectForm");
