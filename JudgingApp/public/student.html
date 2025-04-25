@@ -6,6 +6,7 @@
  <title>Student Login</title>
  <link rel="stylesheet" href="styles.css" />
  <a href="index.html" class="home-button">Home</a>
+
  <style>
   body {
    background: linear-gradient(to right, #667eea, #764ba2);
@@ -26,16 +27,19 @@
    width: 100%;
    max-width: 400px;
   }
+
   h2 {
    color: #333;
    margin-bottom: 20px;
   }
+
   label {
    text-align: left;
    display: block;
    margin-top: 10px;
    font-weight: bold;
   }
+
   input {
    width: 100%;
    padding: 10px;
@@ -43,6 +47,7 @@
    border: 1px solid #ccc;
    border-radius: 5px;
   }
+
   .btn {
    width: 100%;
    margin-top: 20px;
@@ -54,20 +59,25 @@
    border-radius: 5px;
    cursor: pointer;
   }
+
   .btn:hover {
    background-color: #4a56a3;
   }
+
   .error-message {
    color: red;
    margin-top: 10px;
   }
+
   .form-note {
    margin-top: 15px;
   }
+
   .form-note a {
    color: #667eea;
    text-decoration: none;
   }
+
   .home-button {
     position: absolute;
     top: 1rem;
@@ -107,30 +117,30 @@
  </div>
 
  <script>
-  const API_BASE_URL = "https://judgingapp-97rm.onrender.com";
-
   document.getElementById("studentLoginForm").addEventListener("submit", async (e) => {
-   e.preventDefault();
-   const email = document.getElementById("email").value;
-   const password = document.getElementById("password").value;
-   const studentLoginError = document.getElementById("studentLoginError");
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const studentLoginError = document.getElementById("studentLoginError");
 
-   try {
-    const res = await fetch(`${API_BASE_URL}/api/student/login`, {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (!res.ok) {
-     studentLoginError.textContent = data.error || "Login failed.";
-    } else {
-     localStorage.setItem("user", JSON.stringify(data.user));
-     window.location.href = "student-dashboard.html";
+    try {
+      const res = await fetch("https://judgingapp-97rm.onrender.com/api/student/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        studentLoginError.textContent = data.error || "Login failed.";
+      } else {
+        localStorage.setItem("user", JSON.stringify(data));
+        window.location.href = "student-dashboard.html";
+      }
+    } catch (err) {
+      studentLoginError.textContent = "Server error.";
     }
-   } catch (err) {
-    studentLoginError.textContent = "Server error.";
-   }
   });
  </script>
 </body>
