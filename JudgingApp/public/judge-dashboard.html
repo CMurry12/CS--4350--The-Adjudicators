@@ -2,139 +2,165 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Judge Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       background: linear-gradient(to right, #667eea, #764ba2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 100px;
-      min-height: 100vh;
       font-family: Arial, sans-serif;
+      padding: 100px 20px 20px;
+      color: #fff;
+      margin: 0;
     }
 
-    .header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
+    nav {
+      background: linear-gradient(to right, #000000, #232526);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 1000;
     }
 
-    .header__logo {
-      font-size: 24px;
+    nav div:first-child {
       font-weight: bold;
+      font-size: 1.5rem;
+      color: #4c6ef5;
     }
 
-    .header__nav a {
-      color: #fff;
+    nav a {
+      color: white;
       text-decoration: none;
+      font-weight: bold;
       margin-left: 20px;
     }
 
-    .dashboard {
-      width: 90%;
-      max-width: 800px;
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
       background: rgba(255, 255, 255, 0.15);
       padding: 30px;
       border-radius: 10px;
-      color: #fff;
-      margin-bottom: 40px;
+      text-align: center;
     }
 
-    .button-row {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 30px;
+    h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
     }
 
     .btn {
-      padding: 12px 20px;
-      background: #ffd700;
-      color: #333;
+      background-color: #ffd700;
+      color: black;
+      padding: 12px 24px;
       border: none;
       border-radius: 6px;
+      margin: 10px;
       cursor: pointer;
       font-weight: bold;
     }
 
     .btn:hover {
-      background: #f4c400;
+      background-color: #f4c400;
     }
 
-    .event-card {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 10px;
+    .event-list {
+      text-align: left;
+      margin-top: 30px;
     }
 
-    .event-card h3 {
+    .event-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 8px;
       margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header__logo">The Adjudicators</div>
-    <nav class="header__nav">
-      <a href="index.html">Home</a>
-      <a href="login.html" onclick="localStorage.clear()">Logout</a>
-    </nav>
-  </header>
-
-  <div class="dashboard">
-    <h2>Welcome, Judge</h2>
-    
-    <div class="button-row">
-      <button class="btn" onclick="location.href='judge-scoring.html'">Go to Scoring</button>
-      <button class="btn" onclick="location.href='judge-events.html'">View Events</button>
+  <nav>
+    <div>
+      <a href="judge-dashboard.html" style="color: #4c6ef5; font-weight: bold; font-size: 1.5rem; text-decoration: none;">
+        The Adjudicators
+      </a>
     </div>
+    <div>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
 
-    <div id="eventsSection">
+  <div class="container">
+    <h2 id="welcomeMessage">Welcome, Judge!</h2>
+    <button class="btn" onclick="window.location.href='judge-scoring.html'">Go to Scoring</button>
+    <button class="btn" onclick="window.location.href='judge-events.html'">View Events</button>
+    <button class="btn" onclick="window.location.href='leaderboard-judge.html'">Go to Leaderboard</button>
+
+    <div class="event-list">
       <h3>Your Assigned Events</h3>
-      <div id="eventsContainer"></div>
+      <div id="assignedEvents">
+        <p>Loading events...</p>
+      </div>
     </div>
   </div>
 
   <script>
-    const judge = JSON.parse(localStorage.getItem("user")) || { id: "guest" };
+    function logout() {
+      localStorage.clear();
+      window.location.href = "judge-login.html";
+    }
 
-    async function fetchEvents() {
+    async function loadAssignedEvents() {
+      const storedUser = localStorage.getItem("user");
+      const judge = storedUser ? JSON.parse(storedUser) : null;
+
+      const welcomeMessage = document.getElementById("welcomeMessage");
+      if (judge && judge.judgeId) {
+        welcomeMessage.textContent = `Welcome, Judge ${judge.judgeId}!`;
+      }
+
+      if (!judge || !judge.id) {
+        document.getElementById("assignedEvents").innerHTML = "<p style='color: red;'>Not logged in.</p>";
+        return;
+      }
+
       try {
-        const res = await fetch(`https://judgingapp-97rm.onrender.com/api/events/judge/${judge.id}`);
+        const res = await fetch(`http://localhost:3000/api/judges/${judge.id}/events`);
         const events = await res.json();
-        const container = document.getElementById("eventsContainer");
+        const container = document.getElementById("assignedEvents");
+        container.innerHTML = "";
 
-        if (!Array.isArray(events) || events.length === 0) {
-          container.innerHTML = "<p>No events assigned to you yet.</p>";
+        if (!events.length) {
+          container.innerHTML = "<p>No assigned events yet.</p>";
           return;
         }
 
         events.forEach(event => {
-          const card = document.createElement("div");
-          card.className = "event-card";
-          card.innerHTML = `
-            <h3>${event.name}</h3>
-            <p><strong>Date:</strong> ${event.date || "TBA"}</p>
-          `;
-          container.appendChild(card);
+          const div = document.createElement("div");
+          div.className = "event-item";
+          const formattedDate = new Date(event.date).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          });
+          div.textContent = `${event.name} (${formattedDate})`;
+          container.appendChild(div);
         });
       } catch (err) {
-        document.getElementById("eventsContainer").innerHTML = "<p style='color: red;'>Failed to load events.</p>";
+        console.error("Failed to load assigned events:", err);
+        document.getElementById("assignedEvents").innerHTML = "<p style='color: red;'>Failed to load events.</p>";
       }
     }
 
-    fetchEvents();
+    loadAssignedEvents();
   </script>
 </body>
 </html>
