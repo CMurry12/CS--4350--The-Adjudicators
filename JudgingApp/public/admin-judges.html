@@ -102,14 +102,14 @@
     <h2>Judge Manager</h2>
 
     <form id="addJudgeForm">
-      <input type="text" id="newJudgeId" placeholder="Judge ID (email or name)">
-      <input type="password" id="newJudgePass" placeholder="Password">
+      <input type="text" id="newJudgeId" placeholder="Judge ID (email or name)" required>
+      <input type="password" id="newJudgePass" placeholder="Password" required>
       <button type="submit" class="btn">Add Judge</button>
     </form>
 
     <form id="assignForm">
-      <select id="judgeSelect"></select>
-      <select id="eventSelect"></select>
+      <select id="judgeSelect" required></select>
+      <select id="eventSelect" required></select>
       <button type="submit" class="btn">Assign Judge to Event</button>
     </form>
 
@@ -118,84 +118,87 @@
 
   <script>
     async function loadJudges() {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges");
-      const judges = await res.json();
+      try {
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges");
+        const judges = await res.json();
 
-      const judgeList = document.getElementById("judgeList");
-      const judgeSelect = document.getElementById("judgeSelect");
-      judgeList.innerHTML = "";
-      judgeSelect.innerHTML = "";
+        const judgeSelect = document.getElementById("judgeSelect");
+        judgeSelect.innerHTML = "";
 
-      judges.forEach(judge => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-          <strong>${judge.id}</strong>
-          <button class="btn" onclick="removeJudge('${judge.id}')">Delete</button>
-        `;
-        judgeList.appendChild(div);
-
-        const option = document.createElement("option");
-        option.value = judge.id;
-        option.textContent = judge.id;
-        judgeSelect.appendChild(option);
-      });
+        judges.forEach(judge => {
+          const option = document.createElement("option");
+          option.value = judge.id;
+          option.textContent = judge.judgeId;
+          judgeSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading judges:", err);
+      }
     }
 
     async function loadEvents() {
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
-      const events = await res.json();
-      const eventSelect = document.getElementById("eventSelect");
-      eventSelect.innerHTML = "";
+      try {
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/events");
+        const events = await res.json();
 
-      events.forEach(event => {
-        const option = document.createElement("option");
-        option.value = event.id;
-        option.textContent = event.name;
-        eventSelect.appendChild(option);
-      });
-    }
+        const eventSelect = document.getElementById("eventSelect");
+        eventSelect.innerHTML = "";
 
-    async function removeJudge(id) {
-      const res = await fetch(`https://judgingapp-97rm.onrender.com/api/judges/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) loadJudges();
-      else alert("Failed to delete judge");
-    }
-
-    document.getElementById("addJudgeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const id = document.getElementById("newJudgeId").value;
-      const password = document.getElementById("newJudgePass").value;
-
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, password }),
-      });
-
-      if (res.ok) {
-        loadJudges();
-        e.target.reset();
-      } else {
-        alert("Error adding judge");
+        events.forEach(event => {
+          const option = document.createElement("option");
+          option.value = event.id;
+          option.textContent = event.name;
+          eventSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Error loading events:", err);
       }
-    });
+    }
 
     document.getElementById("assignForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const judgeId = document.getElementById("judgeSelect").value;
       const eventId = document.getElementById("eventSelect").value;
 
-      const res = await fetch("https://judgingapp-97rm.onrender.com/api/judge_event", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ judgeId, eventId }),
-      });
+      try {
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/judge_event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judgeId, eventId })
+        });
 
-      if (res.ok) alert("Judge assigned");
-      else alert("Failed to assign judge");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Assignment failed");
+        alert("✅ Judge assigned to event successfully!");
+      } catch (err) {
+        console.error("Assignment failed:", err);
+        alert("Failed to assign judge");
+      }
+    });
+
+    document.getElementById("addJudgeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const judgeId = document.getElementById("newJudgeId").value;
+      const password = document.getElementById("newJudgePass").value;
+
+      try {
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/judges/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judgeId, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to register judge");
+
+        alert("✅ Judge added successfully!");
+        document.getElementById("addJudgeForm").reset();
+        loadJudges();
+      } catch (err) {
+        console.error("Failed to add judge:", err);
+        alert("Error: " + err.message);
+      }
     });
 
     loadJudges();
