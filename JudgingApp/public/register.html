@@ -5,7 +5,6 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  <title>Judging App - Register</title>
  <link rel="stylesheet" href="styles.css" />
- <a href="index.html" class="home-button">Home</a>
  <style>
   body {
    background: linear-gradient(to right, #667eea, #764ba2);
@@ -80,7 +79,6 @@
     background: transparent;
     transition: background 0.2s, color 0.2s;
   }
-
   .home-button:hover {
     background: #ffffff;
     color: #2563eb;
@@ -88,6 +86,9 @@
  </style>
 </head>
 <body>
+
+ <a href="index.html" class="home-button">Home</a>
+
  <div class="form-container">
   <h2>Register as a Judge</h2>
   <form id="registerForm">
@@ -104,113 +105,40 @@
  </div>
 
  <script>
-  const API_BASE_URL = "https://judgingapp-97rm.onrender.com"; // updated to live backend
-
-  // document.getElementById("registerForm").addEventListener("submit", async (e) => {
-  //   e.preventDefault();
-  //   const judgeId = document.getElementById("judgeId").value;
-  //   const password = document.getElementById("password").value;
-  //   const confirmPassword = document.getElementById("confirmPassword").value;
-  //   const passwordError = document.getElementById("passwordError");
-
-  //   if (password !== confirmPassword) {
-  //     passwordError.textContent = "Passwords do not match.";
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ judgeId, password }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (!res.ok) {
-  //       passwordError.textContent = data.error || "Registration failed.";
-  //     } else {
-  //       alert("Registration successful. You can now log in.");
-  //       window.location.href = "judge-login.html";
-  //     }
-  //   } catch (err) {
-  //     passwordError.textContent = "Server error. Try again.";
-  //   }
-  // });
+  const API_BASE_URL = "https://judgingapp-97rm.onrender.com"; // ✅ live backend URL
 
   document.getElementById("registerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    
-    // Get form values
-    const judgeId = document.getElementById("judgeId").value.trim();
+    const judgeId = document.getElementById("judgeId").value;
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
     const passwordError = document.getElementById("passwordError");
-    
-    // Clear previous error messages
-    passwordError.textContent = "";
-    
-    // Client-side validation
-    if (!judgeId) {
-      passwordError.textContent = "Judge ID is required";
-      return;
-    }
-    
-    if (!password) {
-      passwordError.textContent = "Password is required";
-      return;
-    }
-    
+
     if (password !== confirmPassword) {
       passwordError.textContent = "Passwords do not match.";
       return;
     }
-    
+
     try {
-      console.log("Submitting:", { judgeId, password: "****" }); // For debugging
-      
       const res = await fetch(`${API_BASE_URL}/api/judges/register`, {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({ 
-          judgeId: judgeId,
-          password: password
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ judgeId, password }),
       });
-      
-      // Log response for debugging
-      console.log("Status:", res.status);
-      
-      // Try to parse the response as JSON
-      let data;
-      try {
-        data = await res.json();
-        console.log("Response data:", data);
-      } catch (jsonError) {
-        console.error("Could not parse JSON response:", jsonError);
-        // If the response isn't valid JSON, get the text instead
-        const textResponse = await res.text();
-        console.log("Text response:", textResponse);
-        data = { error: "Server returned invalid response" };
-      }
-      
+
+      const data = await res.json();
+
       if (!res.ok) {
-        passwordError.textContent = data.error || `Registration failed (${res.status})`;
+        passwordError.textContent = data.error || "Registration failed.";
       } else {
         alert("Registration successful. You can now log in.");
         window.location.href = "judge-login.html";
       }
     } catch (err) {
-      console.error("Fetch error:", err);
-      passwordError.textContent = "Network error. Check your connection and try again.";
+      passwordError.textContent = "Server error. Try again.";
     }
   });
-
-
- 
  </script>
+
 </body>
 </html>
