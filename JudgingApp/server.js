@@ -2,32 +2,21 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
-const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-
-// === MySQL DB CONNECTION using Railway ENV ===
-const db = mysql.createPool({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: process.env.MYSQLPORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const db = require("./db"); // Make sure this uses the Railway env vars
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// === Middleware ===
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "public"))); // Serve frontend
+app.use(express.static(path.join(__dirname, "public"))); // Frontend
 
-// === File Upload Config (Multer) ===
+// === Multer Upload Config ===
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -37,37 +26,33 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// === Root Route ===
+// === Serve Home Page ===
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// === STUDENT REGISTER ===
+// === Student Routes ===
 app.post("/api/student/register", async (req, res) => {
   const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  if (!name || !email || !password)
     return res.status(400).json({ error: "All fields are required." });
-  }
 
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO students (name, email, password) VALUES (?, ?, ?)", [
-      name,
-      email,
-      hashed,
+      name, email, hashed,
     ]);
     res.status(201).json({ message: "Student registered successfully" });
   } catch (err) {
-    console.error("❌ Student register error:", err.message);
-    console.error(err);
+    console.error("Student register error:", err);
     res.status(500).json({ error: "Server error during student registration" });
   }
 });
 
-// === STUDENT LOGIN ===
 app.post("/api/student/login", async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: "Email and password required" });
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password required" });
 
   try {
     const [rows] = await db.query("SELECT * FROM students WHERE email = ?", [email]);
@@ -79,33 +64,45 @@ app.post("/api/student/login", async (req, res) => {
 
     res.json({ id: student.id, name: student.name, email: student.email });
   } catch (err) {
-    console.error("❌ Student login error:", err.message);
+    console.error("Student login error:", err);
     res.status(500).json({ error: "Server error during login" });
   }
 });
 
-// === JUDGE REGISTER ===
+app.get("/api/student/profile/:id", async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const [[student]] = await db.query("SELECT name, email FROM students WHERE id = ?", [studentId]);
+    const [[{ projectCount }]] = await db.query("SELECT COUNT(*) AS projectCount FROM projects WHERE user_id = ?", [studentId]);
+    const [[{ eventCount }]] = await db.query("SELECT COUNT(DISTINCT event_id) AS eventCount FROM projects WHERE user_id = ?", [studentId]);
+
+    res.json({ name: student.name, email: student.email, projectCount, eventCount });
+  } catch (err) {
+    console.error("Profile summary error:", err);
+    res.status(500).json({ error: "Failed to load student profile summary." });
+  }
+});
+
+// === Judge Routes ===
 app.post("/api/judges/register", async (req, res) => {
   const { judgeId, password } = req.body;
-  if (!judgeId || !password) {
-    return res.status(400).json({ error: "Judge ID and password required." });
-  }
+  if (!judgeId || !password)
+    return res.status(400).json({ error: "Judge ID and password are required." });
 
   try {
     const hashed = await bcrypt.hash(password, 10);
     await db.query("INSERT INTO judges (judgeId, password) VALUES (?, ?)", [judgeId, hashed]);
     res.status(201).json({ message: "Judge registered successfully" });
   } catch (err) {
-    console.error("❌ Judge register error:", err.message);
-    console.error(err); // <- FULL error log
+    console.error("Judge register error:", err);
     res.status(500).json({ error: "Server error during judge registration" });
   }
 });
 
-// === JUDGE LOGIN ===
 app.post("/api/judges/login", async (req, res) => {
   const { judgeId, password } = req.body;
-  if (!judgeId || !password) return res.status(400).json({ error: "Judge ID and password required" });
+  if (!judgeId || !password)
+    return res.status(400).json({ error: "Judge ID and password required" });
 
   try {
     const [rows] = await db.query("SELECT * FROM judges WHERE judgeId = ?", [judgeId]);
@@ -117,30 +114,53 @@ app.post("/api/judges/login", async (req, res) => {
 
     res.json({ id: judge.id, judgeId: judge.judgeId });
   } catch (err) {
-    console.error("❌ Judge login error:", err.message);
+    console.error("Judge login error:", err);
     res.status(500).json({ error: "Server error during login" });
   }
 });
 
-// === STUDENT PROFILE SUMMARY ===
-app.get("/api/student/profile/:id", async (req, res) => {
-  const studentId = req.params.id;
+app.get("/api/judges", async (req, res) => {
   try {
-    const [[student]] = await db.query("SELECT name, email FROM students WHERE id = ?", [studentId]);
-    const [[{ projectCount }]] = await db.query(
-      "SELECT COUNT(*) AS projectCount FROM projects WHERE user_id = ?", [studentId]
-    );
-    const [[{ eventCount }]] = await db.query(
-      "SELECT COUNT(DISTINCT event_id) AS eventCount FROM projects WHERE user_id = ?", [studentId]
-    );
-    res.json({ name: student.name, email: student.email, projectCount, eventCount });
+    const [rows] = await db.query("SELECT id, judgeId FROM judges");
+    res.json(rows);
   } catch (err) {
-    console.error("❌ Profile summary error:", err.message);
-    res.status(500).json({ error: "Failed to load student profile summary." });
+    console.error("Error fetching judges:", err);
+    res.status(500).json({ error: "Failed to load judges" });
   }
 });
 
-// === CREATE EVENT ===
+app.post("/api/judge_event", async (req, res) => {
+  const { judgeId, eventId } = req.body;
+  if (!judgeId || !eventId)
+    return res.status(400).json({ error: "Missing judgeId or eventId" });
+
+  try {
+    await db.query("INSERT INTO judge_event (judge_id, event_id) VALUES (?, ?)", [judgeId, eventId]);
+    res.status(201).json({ message: "Judge assigned to event" });
+  } catch (err) {
+    console.error("Error assigning judge:", err);
+    res.status(500).json({ error: "Failed to assign judge" });
+  }
+});
+
+app.get("/api/judges/:id/events", async (req, res) => {
+  const judgeId = req.params.id;
+  try {
+    const [rows] = await db.query(`
+      SELECT events.id, events.name, events.date 
+      FROM events 
+      JOIN judge_event ON events.id = judge_event.event_id 
+      WHERE judge_event.judge_id = ?`,
+      [judgeId]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching assigned events:", err);
+    res.status(500).json({ error: "Failed to fetch assigned events" });
+  }
+});
+
+// === Events ===
 app.post("/api/events", async (req, res) => {
   const { name, date } = req.body;
   if (!name || !date) return res.status(400).json({ error: "Name and date are required." });
@@ -149,29 +169,28 @@ app.post("/api/events", async (req, res) => {
     await db.query("INSERT INTO events (name, date) VALUES (?, ?)", [name, date]);
     res.status(201).json({ message: "Event added successfully" });
   } catch (err) {
-    console.error("❌ Event creation error:", err.message);
+    console.error("Event creation error:", err);
     res.status(500).json({ error: "Server error while adding event" });
   }
 });
 
-// === GET EVENTS ===
 app.get("/api/events", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM events WHERE date >= CURDATE() ORDER BY date ASC");
     res.json(rows);
   } catch (err) {
-    console.error("❌ Fetch events error:", err.message);
+    console.error("Fetch events error:", err);
     res.status(500).json({ error: "Server error while fetching events" });
   }
 });
 
-// === SUBMIT PROJECT ===
+// === Projects ===
 app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
   const { title, description, eventId, userId } = req.body;
   const file = req.file;
-  if (!title || !description || !eventId || !file || !userId) {
+
+  if (!title || !description || !eventId || !file || !userId)
     return res.status(400).json({ error: "All fields and file are required." });
-  }
 
   try {
     await db.query(
@@ -180,16 +199,60 @@ app.post("/api/projects/upload", upload.single("file"), async (req, res) => {
     );
     res.status(201).json({ message: "Project uploaded successfully!" });
   } catch (err) {
-    console.error("❌ Upload error:", err.message);
+    console.error("Upload error:", err);
     res.status(500).json({ error: "Server error while uploading project" });
   }
 });
 
-// === REVIEW PROJECT ===
+app.get("/api/projects/user/:id", async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const [projects] = await db.query(
+      `SELECT p.title, p.description, p.file_path AS filename, e.name AS event_name 
+       FROM projects p 
+       JOIN events e ON p.event_id = e.id 
+       WHERE p.user_id = ?`,
+      [userId]
+    );
+    res.json(projects);
+  } catch (err) {
+    console.error("Failed to fetch user projects:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/projects/event/:eventId", async (req, res) => {
+  const { eventId } = req.params;
+  try {
+    const [projects] = await db.query(
+      `SELECT p.id, p.title, p.description, p.file_path AS filename, s.name AS student_name
+       FROM projects p
+       JOIN students s ON p.user_id = s.id
+       WHERE p.event_id = ?`,
+      [eventId]
+    );
+    res.json(projects);
+  } catch (err) {
+    console.error("Error fetching projects for event:", err);
+    res.status(500).json({ error: "Failed to fetch projects." });
+  }
+});
+
+// === Reviews ===
 app.post("/api/projects/review", async (req, res) => {
-  const { judgeId, projectId, creativity, impact, execution, feasibility, design, feedback } = req.body;
-  if (!judgeId || !projectId || creativity == null || impact == null || execution == null || feasibility == null || design == null) {
-    return res.status(400).json({ error: "All scoring fields are required." });
+  let { judgeId, projectId, creativity, impact, execution, feasibility, design, feedback } = req.body;
+
+  creativity = Number(creativity);
+  impact = Number(impact);
+  execution = Number(execution);
+  feasibility = Number(feasibility);
+  design = Number(design);
+
+  if (
+    !judgeId || !projectId ||
+    isNaN(creativity) || isNaN(impact) || isNaN(execution) || isNaN(feasibility) || isNaN(design)
+  ) {
+    return res.status(400).json({ error: "All scoring fields must be valid numbers." });
   }
 
   const finalScore = (
@@ -207,12 +270,11 @@ app.post("/api/projects/review", async (req, res) => {
     );
     res.status(201).json({ message: "Review submitted successfully!" });
   } catch (err) {
-    console.error("❌ Review error:", err.message);
+    console.error("Review error:", err);
     res.status(500).json({ error: "Server error while submitting review" });
   }
 });
 
-// === LEADERBOARD ===
 app.get("/api/leaderboard/recent", async (req, res) => {
   try {
     const [allEvents] = await db.query("SELECT * FROM events ORDER BY date DESC");
@@ -249,36 +311,12 @@ app.get("/api/leaderboard/recent", async (req, res) => {
 
     res.json({ topThree: topThreeData, others: remainingData });
   } catch (err) {
-    console.error("❌ Leaderboard error:", err.message);
+    console.error("Leaderboard error:", err);
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 });
 
-// === GET PROJECTS BY USER ===
-app.get("/api/projects/user/:id", async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    const [projects] = await db.query(
-      `SELECT 
-         p.title, 
-         p.description, 
-         p.file_path AS filename, 
-         e.name AS event_name 
-       FROM projects p 
-       JOIN events e ON p.event_id = e.id 
-       WHERE p.user_id = ?`,
-      [userId]
-    );
-
-    res.json(projects);
-  } catch (err) {
-    console.error("❌ Fetch user projects error:", err.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// === START SERVER ===
+// === Start Server ===
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
