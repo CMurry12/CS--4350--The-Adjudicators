@@ -11,8 +11,39 @@
       font-family: Arial, sans-serif;
       padding: 100px 20px 20px;
       color: #fff;
+      margin: 0;
     }
-
+  
+    nav {
+      background: linear-gradient(to right, #000000, #232526);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+  
+    nav div:first-child {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #4c6ef5;
+    }
+  
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+  
+    nav a:hover {
+      text-decoration: underline;
+    }
+  
     .container {
       max-width: 900px;
       margin: 0 auto;
@@ -20,22 +51,22 @@
       padding: 30px;
       border-radius: 10px;
     }
-
+  
     h2 {
       margin-bottom: 20px;
     }
-
+  
     .project {
       background: rgba(255, 255, 255, 0.2);
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 8px;
     }
-
+  
     .project h3 {
       margin-bottom: 10px;
     }
-
+  
     textarea, input {
       width: 100%;
       padding: 10px;
@@ -43,7 +74,7 @@
       border-radius: 6px;
       border: none;
     }
-
+  
     .btn {
       margin-top: 10px;
       background-color: #ffd700;
@@ -53,11 +84,11 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
+  
     .btn:hover {
       background-color: #f4c400;
     }
-
+  
     .feedback-message {
       margin-top: 10px;
       font-weight: bold;
@@ -65,17 +96,45 @@
   </style>
 </head>
 <body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="font-weight: bold; font-size: 1.5rem; color: #4c6ef5;">The Adjudicators</div>
+    <div>
+      <a href="judge-dashboard.html">Dashboard</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
   <div class="container">
     <h2>Score Projects</h2>
 
     <label for="eventSelect">Select Event</label>
-    <select id="eventSelect" style="margin-bottom: 20px;"></select>
+    <select id="eventSelect" style="margin-bottom: 20px;">
+      <option value="">-- Select an Event --</option>
+    </select>
 
     <div id="projectList"></div>
   </div>
 
   <script>
-    const judge = JSON.parse(localStorage.getItem("user")) || { id: "guest" };
+    let judge = { id: "guest" };
+    try {
+      const storedUser = localStorage.getItem("user");
+      judge = storedUser ? JSON.parse(storedUser) : null;
+
+      if (!judge || !judge.id) {
+        alert("You must be logged in to submit a review.");
+        window.location.href = "login.html";
+      }
+    } catch (err) {
+      console.error("Failed to parse user from localStorage:", err);
+    }
+
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
 
     async function loadEvents() {
       try {
@@ -117,7 +176,7 @@
           div.innerHTML = `
             <h3>${project.title}</h3>
             <p><strong>Description:</strong> ${project.description}</p>
-            <p><a href="https://judgingapp-97rm.onrender.com/uploads/${project.file_path}" target="_blank" style="color:#ffd700;">📄 View File</a></p>
+            <p><a href="https://judgingapp-97rm.onrender.com/uploads/${project.filename}" target="_blank" style="color:#ffd700;">📄 View File</a></p>
 
             <label>Creativity (0–10)</label>
             <input type="number" id="creativity-${project.id}" min="0" max="10" required>
