@@ -164,7 +164,7 @@
 
         const data = await res.json();
 
-        if (!res.ok) {
+        if (!res.ok || !data.id) {
           loginError.textContent = data.error || "Login failed.";
         } else {
           localStorage.setItem("user", JSON.stringify(data));
