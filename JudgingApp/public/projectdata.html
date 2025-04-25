@@ -71,7 +71,7 @@
     const id = params.get("id");
 
     async function loadProjectDetails() {
-      const res = await fetch(`http://localhost:3000/api/project/${id}`);
+      const res = await fetch(`https://judgingapp-97rm.onrender.com/api/project/${id}`);
       const data = await res.json();
 
       document.getElementById("projectTitle").textContent = data.project.title;
