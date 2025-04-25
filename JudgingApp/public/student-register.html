@@ -129,8 +129,6 @@
   </div>
 
   <script>
-    const API_BASE_URL = "https://judgingapp-97rm.onrender.com";
-
     document.getElementById("studentRegisterForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -146,7 +144,7 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE_URL}/api/student/register`, {
+        const res = await fetch("https://judgingapp-97rm.onrender.com/api/student/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password })
