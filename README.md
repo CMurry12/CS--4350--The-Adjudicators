@@ -4,33 +4,27 @@ Project title: Judging App
 Group name: The Adjudicators  
 Team members: Charles Murry, Aiba Diane, Ayomide Onafowokan, Edith Sanchez, Samual Holison  
 
+📌 Overview
+The Adjudicators is a full-featured web app designed for college project judging. It includes user roles for students, judges, and admins, and allows project submissions, scoring, event management, and leaderboard access.
 
- Overview
-The Adjudicators is a complete web application that simplifies judging for student competitions. It supports three main user roles—students, judges, and admins—allowing seamless project submissions, scoring, event management, and leaderboard viewing.
+🌐 Live Deployment
+The backend is hosted on Render:
+🔗 API Base URL: https://judgingapp-97rm.onrender.com
 
-file:///Users/aibadiane/Documents/html%20practice%20website/CS--4350--The-Adjudicators/JudgingApp/public/index.html
-
-🚀 How to Run the Project
-1. Clone or Extract
-Download and unzip the project folder or clone it using Git.
-
-2. Install Dependencies
-From the root directory, run:
-
+🚀 How to Run Locally (Optional)
+1. Install Dependencies
 bash
 Copy
 Edit
 npm install
-3. Set Up the Database
-Create a MySQL database.
-
-Run the SQL schema file:
+2. Set Up the Database (Local Only)
+If you're using the hosted backend, you can skip this.
 
 bash
 Copy
 Edit
 mysql -u yourusername -p yourdatabase < schema.sql
-Update the database connection in db.js:
+Update db.js if running locally:
 
 js
 Copy
@@ -41,67 +35,61 @@ const connection = mysql.createConnection({
   password: 'yourpassword',
   database: 'judging_app'
 });
-4. Start the Server
+3. Start the Server
 bash
 Copy
 Edit
 node server.js
-5. Open in Browser
-Navigate to:
-
-bash
-Copy
-Edit
-http://localhost:3000/public/index.html
-🔑 Key Features
-👩‍🎓 Students
+🔑 Features by Role
+👨‍🎓 Students
 Register/Login
 
 Submit projects (projects.html)
 
-View submitted projects (student-dashboard.html)
+View own submissions (student-dashboard.html)
 
 View leaderboard (Leaderboard.html)
 
+Update profile (profile.html)
+
 👨‍⚖️ Judges
+Login/Register
+
+Score assigned projects (judge-scoring.html)
+
+View event details (judge-events.html)
+
+View leaderboard (leaderboard-judge.html)
+
+Judge dashboard (judge-dashboard.html)
+
+👩‍💼 Admins
 Login
 
-View assigned events (judge-events.html)
+Manage events (admin-events.html)
 
-Score projects (judge-scoring.html)
+Manage judges (admin-judges.html)
 
-View results (leaderboard-judge.html)
+Manage projects (admin-projects.html)
 
-👨‍💼 Admins
-Login
+View analytics (admin-analytics.html)
 
-Create and manage:
+Admin dashboard (admin-dashboard.html)
 
-Events (admin-events.html)
-
-Judges (admin-judges.html)
-
-Projects (admin-projects.html)
-
-Analytics (admin-analytics.html)
-
-📁 Project Structure
+📂 Project Structure
 pgsql
 Copy
 Edit
 JudgingApp/
 │
 ├── public/
-│   ├── HTML files (e.g. index.html, register.html, student.html, etc.)
-│   ├── JavaScript (admin.js, judge.js, auth.js)
-│   ├── styles.css
+│   ├── HTML files (all views)
+│   ├── JS files (auth.js, admin.js, judge.js)
+│   └── styles.css
 │
-├── testing/
-│   └── (test-related files if any)
-│
-├── db.js             # MySQL connection setup
-├── server.js         # Backend API using Express
-├── schema.sql        # SQL schema to initialize DB
+├── schema.sql
+├── db.js
+├── server.js
 ├── package.json
 └── README.md
 📦 Dependencies
@@ -111,19 +99,13 @@ mysql2
 
 cors
 
-multer (for file uploads)
+multer (for file upload)
 
 body-parser (optional)
 
-dotenv (optional for environment variables)
+dotenv (optional)
 
-✅ Final Setup Checklist
- Install dependencies with npm install
+📝 Usage
+Open public/index.html in the browser.
 
- Set up and import schema.sql into MySQL
-
- Configure your database in db.js
-
- Start the server with node server.js
-
- Open http://localhost:3000/public/index.html in your browser
+All requests will interact with the hosted API at https://judgingapp-97rm.onrender.com.
