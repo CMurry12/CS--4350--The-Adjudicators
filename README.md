@@ -8,6 +8,8 @@ Team members: Charles Murry, Aiba Diane, Ayomide Onafowokan, Edith Sanchez, Samu
  Overview
 The Adjudicators is a complete web application that simplifies judging for student competitions. It supports three main user roles—students, judges, and admins—allowing seamless project submissions, scoring, event management, and leaderboard viewing.
 
+file:///Users/aibadiane/Documents/html%20practice%20website/CS--4350--The-Adjudicators/JudgingApp/public/index.html
+
 🚀 How to Run the Project
 1. Clone or Extract
 Download and unzip the project folder or clone it using Git.
